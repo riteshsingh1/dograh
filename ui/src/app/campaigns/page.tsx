@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from 'lucide-react';
+import { Megaphone, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
@@ -95,10 +95,10 @@ export default function CampaignsPage() {
 
     return (
         <div className="container mx-auto p-6 space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-start">
                 <div>
-                    <h1 className="text-3xl font-bold mb-2">Campaigns</h1>
-                    <p>Manage your bulk workflow execution campaigns</p>
+                    <h1 className="text-2xl font-bold tracking-tight mb-1">Campaigns</h1>
+                    <p className="text-muted-foreground">Manage your bulk workflow execution campaigns</p>
                 </div>
                     <Button onClick={handleCreateCampaign}>
                         <Plus className="h-4 w-4 mr-2" />
@@ -165,8 +165,10 @@ export default function CampaignsPage() {
                                 </Table>
                             </div>
                         ) : (
-                            <div className="text-center py-8">
-                                <p className="mb-4">No campaigns found</p>
+                            <div className="rounded-xl border border-dashed border-primary/20 bg-primary/5 p-12 text-center">
+                                <Megaphone className="mx-auto h-10 w-10 text-primary/40 mb-3" />
+                                <p className="text-muted-foreground font-medium">No campaigns yet</p>
+                                <p className="text-sm text-muted-foreground/70 mt-1 mb-4">Create your first campaign to start reaching out</p>
                                 <Button onClick={handleCreateCampaign} variant="outline">
                                     <Plus className="h-4 w-4 mr-2" />
                                     Create your first campaign

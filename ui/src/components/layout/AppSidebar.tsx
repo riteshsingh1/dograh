@@ -175,6 +175,12 @@ export function AppSidebar() {
     const isItemActive = isActive(item.url);
     const Icon = item.icon;
 
+    const linkClasses = cn(
+      "transition-all duration-150",
+      "hover:bg-accent hover:text-accent-foreground",
+      isItemActive && "bg-primary/10 text-primary font-medium border-primary/20"
+    );
+
     if (state === "collapsed") {
       return (
         <TooltipProvider delayDuration={0}>
@@ -182,13 +188,10 @@ export function AppSidebar() {
             <TooltipTrigger asChild>
               <SidebarMenuButton
                 asChild
-                className={cn(
-                  "hover:bg-accent hover:text-accent-foreground",
-                  isItemActive && "bg-accent text-accent-foreground"
-                )}
+                className={linkClasses}
               >
                 <Link href={item.url} onClick={handleMobileNavClick}>
-                  <Icon className="h-4 w-4" />
+                  <Icon className={cn("h-4 w-4", isItemActive && "text-primary")} />
                   <span className="sr-only">{item.title}</span>
                 </Link>
               </SidebarMenuButton>
@@ -204,13 +207,10 @@ export function AppSidebar() {
     return (
       <SidebarMenuButton
         asChild
-        className={cn(
-          "hover:bg-accent hover:text-accent-foreground",
-          isItemActive && "bg-accent text-accent-foreground"
-        )}
+        className={linkClasses}
       >
         <Link href={item.url} onClick={handleMobileNavClick}>
-          <Icon className="h-4 w-4" />
+          <Icon className={cn("h-4 w-4", isItemActive && "text-primary")} />
           <span>{item.title}</span>
         </Link>
       </SidebarMenuButton>
@@ -221,23 +221,26 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r">
       <SidebarHeader className="border-b px-2 py-3">
         <div className="flex items-center justify-between">
-          {/* Logo - only show when expanded */}
           {state === "expanded" && (
             <Link
               href="/"
-              className="flex items-center gap-2 px-2 text-xl font-bold"
+              className="flex items-center gap-2.5 px-2 group"
             >
-              TSF VA
-              {versionInfo && (
-                <span className="text-xs font-normal text-muted-foreground">
-                  v{versionInfo.ui}
-                </span>
-              )}
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground text-xs font-bold shadow-sm">
+                T
+              </div>
+              <span className="text-base font-semibold tracking-tight">
+                TestOFire
+                {versionInfo && (
+                  <span className="ml-1.5 text-[10px] font-normal text-muted-foreground align-middle">
+                    v{versionInfo.ui}
+                  </span>
+                )}
+              </span>
             </Link>
           )}
-          {/* Toggle button - center it when collapsed */}
           <SidebarTrigger className={cn(
-            "hover:bg-accent",
+            "hover:bg-accent transition-colors",
             state === "collapsed" && "mx-auto"
           )}>
             {state === "expanded" ? (
@@ -377,8 +380,8 @@ export function AppSidebar() {
             )}>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 cursor-pointer">
-                    <span className="text-xs font-medium">
+                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 cursor-pointer bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary">
+                    <span className="text-xs font-semibold">
                       {(user?.displayName || (user as LocalUser | undefined)?.email || "")
                         .split(/[\s@]/)
                         .filter(Boolean)
@@ -415,8 +418,8 @@ export function AppSidebar() {
             )}>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 cursor-pointer">
-                    <span className="text-xs font-medium">
+                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 cursor-pointer bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary">
+                    <span className="text-xs font-semibold">
                       {(user?.displayName || (user as { primaryEmail?: string })?.primaryEmail || "")
                         .split(/[\s@]/)
                         .filter(Boolean)

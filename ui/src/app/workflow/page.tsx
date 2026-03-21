@@ -1,3 +1,4 @@
+import { Bot } from 'lucide-react';
 import { Suspense } from 'react';
 
 import { getWorkflowsApiV1WorkflowFetchGet } from '@/client/sdk.gen';
@@ -61,8 +62,10 @@ async function WorkflowList() {
                     {activeWorkflows.length > 0 ? (
                         <WorkflowTable workflows={activeWorkflows} showArchived={false} />
                     ) : (
-                        <div className="text-muted-foreground bg-muted rounded-lg p-8 text-center">
-                            No active workflows found. Create your first workflow to get started.
+                        <div className="rounded-xl border border-dashed border-primary/20 bg-primary/5 p-12 text-center">
+                            <Bot className="mx-auto h-10 w-10 text-primary/40 mb-3" />
+                            <p className="text-muted-foreground font-medium">No active agents yet</p>
+                            <p className="text-sm text-muted-foreground/70 mt-1">Create your first voice agent to get started</p>
                         </div>
                     )}
                 </div>
@@ -92,17 +95,19 @@ async function PageContent() {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            {/* Your Workflows Section */}
-            <div className="mb-6">
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold">Your Agents</h1>
+            <div className="mb-8">
+                <div className="flex justify-between items-start mb-2">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight">Your Agents</h1>
+                        <p className="text-muted-foreground mt-1">Build and manage your AI voice agents</p>
+                    </div>
                     <div className="flex gap-2">
                         <UploadWorkflowButton />
                         <CreateWorkflowButton />
                     </div>
                 </div>
-                {workflowList}
             </div>
+            {workflowList}
         </div>
     );
 }
