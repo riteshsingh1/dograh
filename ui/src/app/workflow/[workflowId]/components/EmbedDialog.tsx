@@ -361,23 +361,23 @@ export function EmbedDialog({
                                                         <li>• Add a div with id=&quot;dograh-inline-container&quot; where you want the widget</li>
                                                         <li>• The widget will render inside this container</li>
                                                         <li>• You have full control over the container&apos;s styling</li>
-                                                        <li>• Call window.DograhWidget.start() to begin the call</li>
-                                                        <li>• Call window.DograhWidget.end() to end the call</li>
+                                                        <li>• Call window.TestOFireWidget.start() to begin the call</li>
+                                                        <li>• Call window.TestOFireWidget.end() to end the call</li>
                                                     </ul>
                                                 </div>
 
                                                 <div className="rounded-lg bg-blue-50 dark:bg-blue-950/20 p-4 border border-blue-200 dark:border-blue-800">
                                                     <h4 className="font-medium mb-2 text-blue-900 dark:text-blue-100">Example React Component</h4>
                                                     <pre className="text-xs overflow-x-auto">
-                                                        <code className="text-blue-800 dark:text-blue-200">{`export function DograhAgent() {
+                                                        <code className="text-blue-800 dark:text-blue-200">{`export function TestOFireAgent() {
   const [isCallActive, setIsCallActive] = useState(false);
 
   useEffect(() => {
     // Widget will auto-initialize when script loads
-    window.DograhWidget?.onCallStart(() => {
+    window.TestOFireWidget?.onCallStart(() => {
       setIsCallActive(true);
     });
-    window.DograhWidget?.onCallEnd(() => {
+    window.TestOFireWidget?.onCallEnd(() => {
       setIsCallActive(false);
     });
   }, []);
@@ -389,7 +389,7 @@ export function EmbedDialog({
         {/* Widget renders here */}
       </div>
       <button
-        onClick={() => window.DograhWidget?.start()}
+        onClick={() => window.TestOFireWidget?.start()}
         disabled={isCallActive}
       >
         Start Call

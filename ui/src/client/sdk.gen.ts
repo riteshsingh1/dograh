@@ -1242,7 +1242,7 @@ export const getCurrentPeriodUsageApiV1OrganizationsUsageCurrentPeriodGet = <Thr
 
 /**
  * Get Mps Credits
- * Get usage and quota from MPS for the user's configured Dograh service keys.
+ * Get usage and quota from MPS for the user's configured TestOFire service keys.
  */
 export const getMpsCreditsApiV1OrganizationsUsageMpsCreditsGet = <ThrowOnError extends boolean = false>(options?: Options<GetMpsCreditsApiV1OrganizationsUsageMpsCreditsGetData, ThrowOnError>) => {
     return (options?.client ?? _heyApiClient).get<GetMpsCreditsApiV1OrganizationsUsageMpsCreditsGetResponse, GetMpsCreditsApiV1OrganizationsUsageMpsCreditsGetError, ThrowOnError>({

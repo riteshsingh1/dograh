@@ -140,11 +140,11 @@ export function AppSidebar() {
         //   url: "/integrations",
         //   icon: Plug,
         // },
-        {
-          title: "Developers",
-          url: "/api-keys",
-          icon: Key,
-        },
+        // {
+        //   title: "Developers",
+        //   url: "/api-keys",
+        //   icon: Key,
+        // },
       ];
 
   const observeSection = [
@@ -227,7 +227,7 @@ export function AppSidebar() {
               href="/"
               className="flex items-center gap-2 px-2 text-xl font-bold"
             >
-              Dograh
+              TSF VA
               {versionInfo && (
                 <span className="text-xs font-normal text-muted-foreground">
                   v{versionInfo.ui}
@@ -280,17 +280,17 @@ export function AppSidebar() {
                       asChild
                     >
                       <a
-                        href="https://github.com/dograh-hq/dograh"
+                        href="mailto:support@testofire.com"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="sr-only">Star us on GitHub</span>
+                        <span className="sr-only">Send feedback</span>
                       </a>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="right">
-                    <p>Star us on GitHub</p>
+                    <p>Send feedback</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -301,12 +301,12 @@ export function AppSidebar() {
                 asChild
               >
                 <a
-                  href="https://github.com/dograh-hq/dograh"
+                  href="mailto:support@testofire.com"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="ml-2">Star us on GitHub</span>
+                  <span className="ml-2">Send feedback</span>
                 </a>
               </Button>
             )}

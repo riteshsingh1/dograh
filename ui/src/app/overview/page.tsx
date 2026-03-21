@@ -19,7 +19,7 @@ export default function OverviewPage() {
                     <CardHeader>
                         <CardTitle className="text-3xl">
                             {isOSSMode ? (
-                                "Welcome to Dograh"
+                                "Welcome to TestOFire Voice Agent"
                             ) : (
                                 `Welcome${user?.displayName ? `, ${user.displayName.split(' ')[0]}` : ''}!`
                             )}
@@ -27,7 +27,7 @@ export default function OverviewPage() {
                         <CardDescription className="text-lg mt-2">
                             {isOSSMode ? (
                                 <>
-                                    Open source alternative to Vapi. Help us support the project by giving us a star on GitHub.
+                                    Complete suite for voice agents.
                                 </>
                             ) : (
                                 "Get started with building voice AI workflows"
@@ -38,13 +38,13 @@ export default function OverviewPage() {
                         {isOSSMode && (
                             <Button asChild className="mb-6">
                                 <a
-                                    href="https://github.com/dograh-hq/dograh"
+                                    href="mailto:info@testofire.com"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center"
                                 >
                                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                    Star us on GitHub
+                                    Send feedback
                                 </a>
                             </Button>
                         )}
@@ -87,11 +87,11 @@ export default function OverviewPage() {
                 </div>
 
                 {/* Resources Section */}
-                <Card className="mt-8">
+                {/* <Card className="mt-8">
                     <CardHeader>
                         <CardTitle>Resources</CardTitle>
                         <CardDescription>
-                            Get help and learn more about Dograh
+                            Get help and learn more about TestOFire
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -116,7 +116,7 @@ export default function OverviewPage() {
                             </Button>
                         </div>
                     </CardContent>
-                </Card>
+                </Card> */}
             </div>
         </div>
     );

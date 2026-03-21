@@ -25,8 +25,8 @@ LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY")
 BACKEND_API_ENDPOINT = os.getenv("BACKEND_API_ENDPOINT", "http://localhost:8000")
 UI_APP_URL = os.getenv("UI_APP_URL", "http://localhost:3010")
 
-DATABASE_URL = os.environ["DATABASE_URL"]
-REDIS_URL = os.environ["REDIS_URL"]
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/dograh")
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
 DEPLOYMENT_MODE = os.getenv("DEPLOYMENT_MODE", "oss")
 AUTH_PROVIDER = os.getenv("AUTH_PROVIDER", "local")

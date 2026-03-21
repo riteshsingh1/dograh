@@ -320,12 +320,12 @@ export default function ConfigureTelephonyPage() {
                 <CardDescription>
                   {selectedProvider === "ari" ? (
                     <>
-                      Connect Dograh to your Asterisk PBX using the Asterisk REST Interface (ARI).
+                      Connect TestOFire to your Asterisk PBX using the Asterisk REST Interface (ARI).
                       ARI provides a WebSocket-based event model for controlling calls via Stasis applications.
                     </>
                   ) : selectedProvider === "cloudonix" ? (
                     <>
-                      Cloudonix is an AI Connectivity platform, enabling you to connect Dograh to any SIP product or SIP Telephony Provider.<br/><br/>
+                      Cloudonix is an AI Connectivity platform, enabling you to connect TestOFire to any SIP product or SIP Telephony Provider.<br/><br/>
                       <iframe
                         style={{ border: 0 }}
                         width="100%"
@@ -376,7 +376,7 @@ export default function ConfigureTelephonyPage() {
                         <li>Enable the ARI module in your Asterisk configuration (ari.conf)</li>
                         <li>Create an ARI user with a password in ari.conf</li>
                         <li>Create a Stasis application in your dialplan (extensions.conf)</li>
-                        <li>Ensure the ARI HTTP endpoint is accessible from Dograh</li>
+                        <li>Ensure the ARI HTTP endpoint is accessible from TestOFire</li>
                         <li>Enter your ARI endpoint URL, app name, and password below</li>
                       </ol>
                     </div>
@@ -429,8 +429,8 @@ export default function ConfigureTelephonyPage() {
                       <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
                         <li>Sign up for a Cloudonix account at https://cloudonix.com</li>
                         <li>Create an <i>API token</i> for your Cloudonix domain</li>
-                        <li>Configure your Cloudoinx <i>API Token</i> and <i>Cloudonix Domain Name</i> in Dograh</li>
-                        <li>Configure an optional outbound phone number for your Dograh agent</li>
+                        <li>Configure your Cloudoinx <i>API Token</i> and <i>Cloudonix Domain Name</i> in TestOFire</li>
+                        <li>Configure an optional outbound phone number for your TestOFire agent</li>
                       </ol>
                     </div>
                     <div className="bg-muted border border-border rounded p-3">

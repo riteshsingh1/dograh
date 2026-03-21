@@ -21,7 +21,16 @@ ARQ_WORKERS=${ARQ_WORKERS:-1}
 LOG_TO_FILE=${LOG_TO_FILE:-true}
 
 cd "$BASE_DIR"
-echo "Starting Dograh Services (DEV MODE) at $(date) in BASE_DIR: ${BASE_DIR}"
+echo "Starting Dograh Services (DEV MODE) at $(date) in BASE_DIR: $BASE_DIR"
+
+# Load environment variables if .env exists
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+fi
+
+# Set default DATABASE_URL and REDIS_URL if not already set
+export DATABASE_URL=${DATABASE_URL:-"postgresql+asyncpg://postgres:postgres@localhost:5432/dograh"}
+export REDIS_URL=${REDIS_URL:-"redis://localhost:6379/0"}
 echo "Auto-reload enabled for api/ directory changes"
 
 ###############################################################################
