@@ -22,7 +22,7 @@ LANGFUSE_PUBLIC_KEY = os.getenv("LANGFUSE_PUBLIC_KEY")
 LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY")
 
 # URLs for deployment
-BACKEND_API_ENDPOINT = os.getenv("BACKEND_API_ENDPOINT", "http://localhost:8000")
+BACKEND_API_ENDPOINT = os.getenv("BACKEND_API_ENDPOINT", "http://localhost:8001")
 UI_APP_URL = os.getenv("UI_APP_URL", "http://localhost:3010")
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/dograh")

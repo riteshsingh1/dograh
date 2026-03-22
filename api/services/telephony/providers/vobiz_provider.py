@@ -260,13 +260,13 @@ class VobizProvider(TelephonyProvider):
         Vobiz uses <Stream> element similar to Twilio but with Plivo-compatible attributes:
         - bidirectional: Enable two-way audio
         - audioTrack: Which audio to stream (inbound, outbound, both)
-        - contentType: audio/x-mulaw;rate=8000
+        - contentType: audio/x-mulaw;rate=8001
         """
         _, wss_backend_endpoint = await get_backend_endpoints()
 
         vobiz_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Stream bidirectional="true" keepCallAlive="true" contentType="audio/x-mulaw;rate=8000">{wss_backend_endpoint}/api/v1/telephony/ws/{workflow_id}/{user_id}/{workflow_run_id}</Stream>
+    <Stream bidirectional="true" keepCallAlive="true" contentType="audio/x-mulaw;rate=8001">{wss_backend_endpoint}/api/v1/telephony/ws/{workflow_id}/{user_id}/{workflow_run_id}</Stream>
 </Response>"""
         return vobiz_xml
 
@@ -492,7 +492,7 @@ class VobizProvider(TelephonyProvider):
 
         vobiz_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Stream bidirectional="true" keepCallAlive="true" contentType="audio/x-mulaw;rate=8000">{websocket_url}</Stream>
+    <Stream bidirectional="true" keepCallAlive="true" contentType="audio/x-mulaw;rate=8001">{websocket_url}</Stream>
 </Response>"""
 
         return Response(content=vobiz_xml, media_type="application/xml")

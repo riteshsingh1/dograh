@@ -353,14 +353,14 @@ async def create_vobiz_transport(
         auth_id=auth_id,
         auth_token=auth_token,
         params=VobizFrameSerializer.InputParams(
-            vobiz_sample_rate=8000,  # Vobiz uses MULAW at 8kHz
+            vobiz_sample_rate=8001,  # Vobiz uses MULAW at 8kHz
             sample_rate=audio_config.pipeline_sample_rate,
         ),
     )
 
     logger.debug(
         f"[run {workflow_run_id}] VobizFrameSerializer created for Vobiz - "
-        f"transport_rate=8000Hz, pipeline_rate={audio_config.pipeline_sample_rate}Hz"
+        f"transport_rate=8001Hz, pipeline_rate={audio_config.pipeline_sample_rate}Hz"
     )
 
     # Create WebSocket transport (same structure as Twilio/Vonage)

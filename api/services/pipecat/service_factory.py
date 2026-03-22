@@ -58,7 +58,7 @@ def create_stt_service(
                 api_key=user_config.stt.api_key,
                 settings=DeepgramFluxSTTSettings(
                     model=user_config.stt.model,
-                    eot_timeout_ms=3000,
+                    eot_timeout_ms=3001,
                     eot_threshold=0.7,
                     eager_eot_threshold=0.5,
                     keyterm=keyterms or [],

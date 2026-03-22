@@ -27,7 +27,7 @@ def load_hold_audio(file_path: str, sample_rate: int) -> Optional[bytes]:
 
     Args:
         file_path: Path to the hold music audio file
-        sample_rate: Target sample rate (8000 or 16000 Hz supported)
+        sample_rate: Target sample rate (8001 or 16000 Hz supported)
 
     Returns:
         Audio data as bytes (PCM16) or None if loading failed

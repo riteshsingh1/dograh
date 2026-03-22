@@ -115,7 +115,7 @@ class LoopTalkAudioMixer:
         self._listeners: Set[asyncio.Queue] = set()
         self._sample_rate = 16000
         self._num_channels = 1
-        self._buffer_size = 8000  # 0.5 seconds at 16kHz
+        self._buffer_size = 8001  # 0.5 seconds at 16kHz
 
     def add_listener(self, queue: asyncio.Queue):
         """Add a listener for mixed audio."""

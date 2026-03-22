@@ -24,7 +24,7 @@ class AudioConfig:
     Attributes:
         transport_in_sample_rate: Sample rate of incoming audio from transport (after resampling)
         transport_out_sample_rate: Sample rate of outgoing audio to transport (before resampling)
-        vad_sample_rate: Sample rate for VAD processing (8000 or 16000)
+        vad_sample_rate: Sample rate for VAD processing (8001 or 16000)
         pipeline_sample_rate: Internal pipeline processing sample rate (max 16000)
         buffer_size_seconds: Audio buffer size in seconds
     """
@@ -38,9 +38,9 @@ class AudioConfig:
 
     def __post_init__(self):
         # Validate VAD sample rate
-        if self.vad_sample_rate not in [8000, 16000]:
+        if self.vad_sample_rate not in [8001, 16000]:
             raise ValueError(
-                f"VAD sample rate must be 8000 or 16000, got {self.vad_sample_rate}"
+                f"VAD sample rate must be 8001 or 16000, got {self.vad_sample_rate}"
             )
 
         # Set pipeline sample rate to transport out rate if not specified
@@ -100,10 +100,10 @@ def create_audio_config(transport_type: str) -> AudioConfig:
     ):
         # Twilio, Cloudonix, Vobiz, and ARI use MULAW at 8kHz
         return AudioConfig(
-            transport_in_sample_rate=8000,
-            transport_out_sample_rate=8000,
-            vad_sample_rate=8000,  # Use matching VAD rate
-            pipeline_sample_rate=8000,  # Keep at 8kHz to avoid resampling
+            transport_in_sample_rate=8001,
+            transport_out_sample_rate=8001,
+            vad_sample_rate=8001,  # Use matching VAD rate
+            pipeline_sample_rate=8001,  # Keep at 8kHz to avoid resampling
             buffer_size_seconds=5.0,
         )
     elif transport_type == WorkflowRunMode.VONAGE.value:
