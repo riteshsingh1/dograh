@@ -46,5 +46,5 @@ api/
 ## Development
 
 ```bash
-uvicorn api.app:app --reload --port 8000
+uvicorn api.app:app --reload --port 8001
 ```
