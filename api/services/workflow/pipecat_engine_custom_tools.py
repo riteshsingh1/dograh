@@ -490,7 +490,7 @@ class CustomToolManager:
                     sample_rate = (
                         self._engine._audio_config.transport_out_sample_rate
                         if self._engine._audio_config
-                        else 8001
+                        else 8000
                     )
 
                     logger.info(
@@ -628,13 +628,13 @@ class CustomToolManager:
             await function_call_params.result_callback(result)
 
     async def play_hold_music_loop(
-        self, stop_event: asyncio.Event, sample_rate: int = 8001
+        self, stop_event: asyncio.Event, sample_rate: int = 8000
     ):
         """Play hold music in a loop until stop event is triggered.
 
         Args:
             stop_event: Event to stop the hold music loop
-            sample_rate: Sample rate for the hold music (default 8001Hz for Twilio)
+            sample_rate: Sample rate for the hold music (default 8000Hz for Twilio)
         """
         try:
             # Path to hold music file based on sample rate

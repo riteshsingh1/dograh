@@ -16,26 +16,26 @@ from api.utils.common import get_backend_endpoints, get_scheme
 possible_env_paths = [
     "http://localhost",
     "http://localhost/",
-    "http://localhost:8001",
-    "http://localhost:8001/",
+    "http://localhost:8000",
+    "http://localhost:8000/",
     "http://127.0.0.1",
     "http://127.0.0.1/",
-    "http://127.0.0.1:8001",
-    "http://127.0.0.1:8001/",
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1:8000/",
     "http://xyz.com",
     "http://xyz.com/",
     "https://xyz.com",
     "https://xyz.com/",
     "localhost",
-    "localhost:8001",
+    "localhost:8000",
     "localhost/",
-    "localhost:8001/",
+    "localhost:8000/",
     "xyz.com",
     "xyz.com/",
     "127.0.0.1",
     "127.0.0.1/",
-    "127.0.0.1:8001",
-    "127.0.0.1:8001/",
+    "127.0.0.1:8000",
+    "127.0.0.1:8000/",
 ]
 
 # Invalid URLs that should raise ValueError
@@ -72,7 +72,7 @@ class TestGetScheme:
 
     def test_no_scheme(self):
         assert get_scheme("example.com") is None
-        assert get_scheme("localhost:8001") is None
+        assert get_scheme("localhost:8000") is None
 
     def test_malformed_url_single_slash(self):
         # 'http:/localhost' doesn't have '://' so returns None
@@ -115,23 +115,23 @@ class TestGetBackendEndpointsWithEnvVar:
             # localhost URLs with http:// scheme
             ("http://localhost", "http://localhost", "ws://localhost"),
             ("http://localhost/", "http://localhost", "ws://localhost"),
-            ("http://localhost:8001", "http://localhost:8001", "ws://localhost:8001"),
-            ("http://localhost:8001/", "http://localhost:8001", "ws://localhost:8001"),
+            ("http://localhost:8000", "http://localhost:8000", "ws://localhost:8000"),
+            ("http://localhost:8000/", "http://localhost:8000", "ws://localhost:8000"),
             # localhost URLs without scheme (should add http/ws)
             ("localhost", "http://localhost", "ws://localhost"),
             ("localhost/", "http://localhost", "ws://localhost"),
-            ("localhost:8001", "http://localhost:8001", "ws://localhost:8001"),
-            ("localhost:8001/", "http://localhost:8001", "ws://localhost:8001"),
+            ("localhost:8000", "http://localhost:8000", "ws://localhost:8000"),
+            ("localhost:8000/", "http://localhost:8000", "ws://localhost:8000"),
             # 127.0.0.1 URLs with http:// scheme
             ("http://127.0.0.1", "http://127.0.0.1", "ws://127.0.0.1"),
             ("http://127.0.0.1/", "http://127.0.0.1", "ws://127.0.0.1"),
-            ("http://127.0.0.1:8001", "http://127.0.0.1:8001", "ws://127.0.0.1:8001"),
-            ("http://127.0.0.1:8001/", "http://127.0.0.1:8001", "ws://127.0.0.1:8001"),
+            ("http://127.0.0.1:8000", "http://127.0.0.1:8000", "ws://127.0.0.1:8000"),
+            ("http://127.0.0.1:8000/", "http://127.0.0.1:8000", "ws://127.0.0.1:8000"),
             # 127.0.0.1 URLs without scheme (should add http/ws)
             ("127.0.0.1", "http://127.0.0.1", "ws://127.0.0.1"),
             ("127.0.0.1/", "http://127.0.0.1", "ws://127.0.0.1"),
-            ("127.0.0.1:8001", "http://127.0.0.1:8001", "ws://127.0.0.1:8001"),
-            ("127.0.0.1:8001/", "http://127.0.0.1:8001", "ws://127.0.0.1:8001"),
+            ("127.0.0.1:8000", "http://127.0.0.1:8000", "ws://127.0.0.1:8000"),
+            ("127.0.0.1:8000/", "http://127.0.0.1:8000", "ws://127.0.0.1:8000"),
         ],
     )
     async def test_localhost_urls_no_tunnel(self, env_url, expected_http, expected_ws):
@@ -152,20 +152,20 @@ class TestGetBackendEndpointsWithEnvVar:
         [
             "http://localhost",
             "http://localhost/",
-            "http://localhost:8001",
-            "http://localhost:8001/",
+            "http://localhost:8000",
+            "http://localhost:8000/",
             "localhost",
             "localhost/",
-            "localhost:8001",
-            "localhost:8001/",
+            "localhost:8000",
+            "localhost:8000/",
             "http://127.0.0.1",
             "http://127.0.0.1/",
-            "http://127.0.0.1:8001",
-            "http://127.0.0.1:8001/",
+            "http://127.0.0.1:8000",
+            "http://127.0.0.1:8000/",
             "127.0.0.1",
             "127.0.0.1/",
-            "127.0.0.1:8001",
-            "127.0.0.1:8001/",
+            "127.0.0.1:8000",
+            "127.0.0.1:8000/",
         ],
     )
     async def test_localhost_urls_with_tunnel_available(self, env_url):
@@ -186,54 +186,54 @@ class TestGetBackendEndpointsWithEnvVar:
     @pytest.mark.asyncio
     async def test_localhost_tunnel_exception_falls_back(self):
         """Test that tunnel exceptions fall back to localhost endpoint."""
-        with patch("api.utils.common.BACKEND_API_ENDPOINT", "http://localhost:8001"):
+        with patch("api.utils.common.BACKEND_API_ENDPOINT", "http://localhost:8000"):
             with patch(
                 "api.utils.common.TunnelURLProvider.get_tunnel_urls",
                 new_callable=AsyncMock,
             ) as mock_tunnel:
                 mock_tunnel.side_effect = Exception("Tunnel not available")
                 http_url, ws_url = await get_backend_endpoints()
-                assert http_url == "http://localhost:8001"
-                assert ws_url == "ws://localhost:8001"
+                assert http_url == "http://localhost:8000"
+                assert ws_url == "ws://localhost:8000"
 
     @pytest.mark.asyncio
     async def test_localhost_with_trailing_slash_tunnel_exception_falls_back(self):
         """Test that tunnel exceptions fall back to localhost endpoint, trailing slash stripped."""
-        with patch("api.utils.common.BACKEND_API_ENDPOINT", "http://localhost:8001/"):
+        with patch("api.utils.common.BACKEND_API_ENDPOINT", "http://localhost:8000/"):
             with patch(
                 "api.utils.common.TunnelURLProvider.get_tunnel_urls",
                 new_callable=AsyncMock,
             ) as mock_tunnel:
                 mock_tunnel.side_effect = Exception("Tunnel not available")
                 http_url, ws_url = await get_backend_endpoints()
-                assert http_url == "http://localhost:8001"
-                assert ws_url == "ws://localhost:8001"
+                assert http_url == "http://localhost:8000"
+                assert ws_url == "ws://localhost:8000"
 
     @pytest.mark.asyncio
     async def test_127_tunnel_exception_falls_back(self):
         """Test that tunnel exceptions fall back to 127.0.0.1 endpoint."""
-        with patch("api.utils.common.BACKEND_API_ENDPOINT", "http://127.0.0.1:8001"):
+        with patch("api.utils.common.BACKEND_API_ENDPOINT", "http://127.0.0.1:8000"):
             with patch(
                 "api.utils.common.TunnelURLProvider.get_tunnel_urls",
                 new_callable=AsyncMock,
             ) as mock_tunnel:
                 mock_tunnel.side_effect = Exception("Tunnel not available")
                 http_url, ws_url = await get_backend_endpoints()
-                assert http_url == "http://127.0.0.1:8001"
-                assert ws_url == "ws://127.0.0.1:8001"
+                assert http_url == "http://127.0.0.1:8000"
+                assert ws_url == "ws://127.0.0.1:8000"
 
     @pytest.mark.asyncio
     async def test_127_with_trailing_slash_tunnel_exception_falls_back(self):
         """Test that tunnel exceptions fall back to 127.0.0.1 endpoint, trailing slash stripped."""
-        with patch("api.utils.common.BACKEND_API_ENDPOINT", "http://127.0.0.1:8001/"):
+        with patch("api.utils.common.BACKEND_API_ENDPOINT", "http://127.0.0.1:8000/"):
             with patch(
                 "api.utils.common.TunnelURLProvider.get_tunnel_urls",
                 new_callable=AsyncMock,
             ) as mock_tunnel:
                 mock_tunnel.side_effect = Exception("Tunnel not available")
                 http_url, ws_url = await get_backend_endpoints()
-                assert http_url == "http://127.0.0.1:8001"
-                assert ws_url == "ws://127.0.0.1:8001"
+                assert http_url == "http://127.0.0.1:8000"
+                assert ws_url == "ws://127.0.0.1:8000"
 
 
 class TestGetBackendEndpointsNoEnvVar:

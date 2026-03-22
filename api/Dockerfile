@@ -67,7 +67,7 @@ ENV PYTHONPATH=/app
 ENV LOG_TO_FILE=false
 
 # Expose the port FastAPI will run on
-EXPOSE 8001
+EXPOSE 8000
 
 # Run the FastAPI app with uvicorn
 CMD ["./scripts/start_services_dev.sh"]

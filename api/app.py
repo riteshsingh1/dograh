@@ -51,7 +51,7 @@ app = FastAPI(
     lifespan=lifespan,
     servers=[
         {"url": "https://app.dograh.com", "description": "Production"},
-        {"url": "http://localhost:8001", "description": "Local development"},
+        {"url": "http://localhost:8000", "description": "Local development"},
     ],
 )
 
