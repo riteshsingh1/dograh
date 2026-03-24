@@ -37,6 +37,9 @@ CERTBOT_EMAIL=""
 HOST_API_PORT="${HOST_API_PORT:-8000}"
 HOST_UI_PORT="${HOST_UI_PORT:-3010}"
 HOST_MINIO_PORT="${HOST_MINIO_PORT:-9000}"
+CLI_API_PORT=""
+CLI_UI_PORT=""
+CLI_MINIO_PORT=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -59,11 +62,11 @@ while [[ $# -gt 0 ]]; do
     --skip-migrations)
       SKIP_MIGRATIONS=true; shift ;;
     --api-port)
-      HOST_API_PORT="$2"; shift 2 ;;
+      CLI_API_PORT="$2"; shift 2 ;;
     --ui-port)
-      HOST_UI_PORT="$2"; shift 2 ;;
+      CLI_UI_PORT="$2"; shift 2 ;;
     --minio-port)
-      HOST_MINIO_PORT="$2"; shift 2 ;;
+      CLI_MINIO_PORT="$2"; shift 2 ;;
     *)
       echo "Unknown arg: $1"
       exit 1 ;;
@@ -111,6 +114,17 @@ set -a
 source "$ENV_FILE"
 set +a
 
+if [[ -n "$CLI_API_PORT" ]]; then
+  HOST_API_PORT="$CLI_API_PORT"
+fi
+if [[ -n "$CLI_UI_PORT" ]]; then
+  HOST_UI_PORT="$CLI_UI_PORT"
+fi
+if [[ -n "$CLI_MINIO_PORT" ]]; then
+  HOST_MINIO_PORT="$CLI_MINIO_PORT"
+fi
+export HOST_API_PORT HOST_UI_PORT HOST_MINIO_PORT
+
 if [[ -n "$BACKEND_ENDPOINT" ]]; then
   export BACKEND_API_ENDPOINT="$BACKEND_ENDPOINT"
 fi
@@ -137,8 +151,6 @@ services:
       ENVIRONMENT: "production"
       LOG_LEVEL: "INFO"
     restart: unless-stopped
-    ports:
-      - "${HOST_API_PORT}:8000"
 
   ui:
     build:
@@ -148,8 +160,6 @@ services:
     environment:
       NODE_ENV: "production"
     restart: unless-stopped
-    ports:
-      - "${HOST_UI_PORT}:3010"
 
   postgres:
     restart: unless-stopped
@@ -157,9 +167,6 @@ services:
     restart: unless-stopped
   minio:
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:${HOST_MINIO_PORT}:9000"
-      - "127.0.0.1:9001:9001"
   cloudflared:
     restart: unless-stopped
 EOF

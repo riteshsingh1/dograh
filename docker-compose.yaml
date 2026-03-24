@@ -47,8 +47,8 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
       MINIO_API_CORS_ALLOW_ORIGIN: "*"
     ports:
-      - "127.0.0.1:9000:9000" # Bind to localhost explicitly
-      - "127.0.0.1:9001:9001"
+      - "127.0.0.1:${HOST_MINIO_PORT:-9000}:9000" # Bind to localhost explicitly
+      - "127.0.0.1:${HOST_MINIO_CONSOLE_PORT:-9001}:9001"
     volumes:
       - minio-data:/data
     healthcheck:
@@ -120,7 +120,7 @@ services:
       OSS_JWT_SECRET: "${OSS_JWT_SECRET:-ChangeMeInProduction}"
 
     ports:
-      - "8000:8000"
+      - "${HOST_API_PORT:-8000}:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -156,7 +156,7 @@ services:
       POSTHOG_KEY: "phc_ItizB1dP6yv7ZYobbcqrpxTdbomDA8hJFSEmAMdYvIr"
       POSTHOG_HOST: "https://us.posthog.com"
     ports:
-      - "3010:3010"
+      - "${HOST_UI_PORT:-3010}:3010"
     depends_on:
       api:
         condition: service_healthy
