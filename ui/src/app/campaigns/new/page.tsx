@@ -37,9 +37,10 @@ export default function NewCampaignPage() {
     // Form state
     const [campaignName, setCampaignName] = useState('');
     const [selectedWorkflowId, setSelectedWorkflowId] = useState<string>('');
-    const [sourceType, setSourceType] = useState<'google-sheet' | 'csv'>('csv');
+    const [sourceType, setSourceType] = useState<'google-sheet' | 'csv' | 'meta-ads'>('csv');
     const [sourceId, setSourceId] = useState('');
     const [selectedFileName, setSelectedFileName] = useState('');
+    const [metaLeadFormId, setMetaLeadFormId] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [createError, setCreateError] = useState<string | null>(null);
     const [userAccessToken, setUserAccessToken] = useState<string>('');
@@ -306,6 +307,11 @@ export default function NewCampaignPage() {
         setSelectedFileName(fileName);
     };
 
+    const handleMetaLeadFormIdChange = (value: string) => {
+        setMetaLeadFormId(value);
+        setSourceId(value);
+    };
+
     return (
         <div className="container mx-auto p-6 pb-12 space-y-6 max-w-2xl">
             <div>
@@ -386,9 +392,10 @@ export default function NewCampaignPage() {
                                 <Select
                                     value={sourceType}
                                     onValueChange={(value) => {
-                                        setSourceType(value as 'google-sheet' | 'csv');
+                                        setSourceType(value as 'google-sheet' | 'csv' | 'meta-ads');
                                         setSourceId('');
                                         setSelectedFileName('');
+                                        setMetaLeadFormId('');
                                     }}
                                     required
                                 >
@@ -396,7 +403,8 @@ export default function NewCampaignPage() {
                                         <SelectValue placeholder="Select source type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {/* <SelectItem value="google-sheet">Google Sheet</SelectItem> */}
+                                        <SelectItem value="google-sheet">Google Sheet</SelectItem>
+                                        <SelectItem value="meta-ads">Meta Ads Leads</SelectItem>
                                         <SelectItem value="csv">CSV File</SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -411,6 +419,20 @@ export default function NewCampaignPage() {
                                     onSheetSelected={handleSheetSelected}
                                     selectedSheetUrl={sourceId}
                                 />
+                            ) : sourceType === 'meta-ads' ? (
+                                <div className="space-y-2">
+                                    <Label htmlFor="meta-lead-form-id">Meta Lead Form ID</Label>
+                                    <Input
+                                        id="meta-lead-form-id"
+                                        placeholder="Enter Meta Lead Form ID"
+                                        value={metaLeadFormId}
+                                        onChange={(e) => handleMetaLeadFormIdChange(e.target.value)}
+                                        required
+                                    />
+                                    <p className="text-sm text-muted-foreground">
+                                        Leads will be fetched from this Meta form using workflow-level Meta credentials.
+                                    </p>
+                                </div>
                             ) : (
                                 <CsvUploadSelector
                                     accessToken={userAccessToken}

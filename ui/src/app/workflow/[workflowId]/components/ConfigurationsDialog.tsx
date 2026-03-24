@@ -6,7 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { AmbientNoiseConfiguration, TurnStopStrategy, WorkflowConfigurations } from "@/types/workflow-configurations";
+import {
+    AmbientNoiseConfiguration,
+    CampaignIntegrationsConfiguration,
+    TurnStopStrategy,
+    WorkflowConfigurations
+} from "@/types/workflow-configurations";
 
 interface ConfigurationsDialogProps {
     open: boolean;
@@ -19,6 +24,22 @@ interface ConfigurationsDialogProps {
 const DEFAULT_AMBIENT_NOISE_CONFIG: AmbientNoiseConfiguration = {
     enabled: false,
     volume: 0.3,
+};
+
+const DEFAULT_CAMPAIGN_CONFIG: CampaignIntegrationsConfiguration = {
+    mode: 'google-sheet',
+    meta_ads: {
+        access_token: '',
+        lead_form_id: '',
+    },
+    google_sheets: {
+        input_sheet_url: '',
+        output_sheet_url: '',
+        access_token: '',
+    },
+    pricing: {
+        credit_limit_inr: undefined,
+    },
 };
 
 export const ConfigurationsDialog = ({
@@ -44,6 +65,9 @@ export const ConfigurationsDialog = ({
     const [turnStopStrategy, setTurnStopStrategy] = useState<TurnStopStrategy>(
         workflowConfigurations?.turn_stop_strategy || 'transcription'
     );
+    const [campaignConfig, setCampaignConfig] = useState<CampaignIntegrationsConfiguration>(
+        workflowConfigurations?.campaign_integrations || DEFAULT_CAMPAIGN_CONFIG
+    );
     const [isSaving, setIsSaving] = useState(false);
 
     const handleSave = async () => {
@@ -54,7 +78,8 @@ export const ConfigurationsDialog = ({
                 max_call_duration: maxCallDuration,
                 max_user_idle_timeout: maxUserIdleTimeout,
                 smart_turn_stop_secs: smartTurnStopSecs,
-                turn_stop_strategy: turnStopStrategy
+                turn_stop_strategy: turnStopStrategy,
+                campaign_integrations: campaignConfig,
             }, name);
             onOpenChange(false);
         } catch (error) {
@@ -73,6 +98,7 @@ export const ConfigurationsDialog = ({
             setMaxUserIdleTimeout(workflowConfigurations?.max_user_idle_timeout || 10);
             setSmartTurnStopSecs(workflowConfigurations?.smart_turn_stop_secs || 2);
             setTurnStopStrategy(workflowConfigurations?.turn_stop_strategy || 'transcription');
+            setCampaignConfig(workflowConfigurations?.campaign_integrations || DEFAULT_CAMPAIGN_CONFIG);
         }
     }, [open, workflowName, workflowConfigurations]);
 
@@ -263,6 +289,138 @@ export const ConfigurationsDialog = ({
                                     }}
                                 />
                                 <p className="text-xs text-muted-foreground">Default: 10 seconds</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Campaign Integrations Section */}
+                    <div className="space-y-4">
+                        <div>
+                            <h3 className="text-sm font-semibold mb-1">Campaign Integrations</h3>
+                            <p className="text-xs text-muted-foreground">
+                                Configure workflow-level source credentials, output sheet, and INR credit limit.
+                            </p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="campaign_mode" className="text-xs">Campaign Mode</Label>
+                            <Select
+                                value={campaignConfig.mode || 'google-sheet'}
+                                onValueChange={(value: 'meta-ads' | 'google-sheet') =>
+                                    setCampaignConfig(prev => ({ ...prev, mode: value }))
+                                }
+                            >
+                                <SelectTrigger id="campaign_mode">
+                                    <SelectValue placeholder="Select campaign mode" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="google-sheet">Google Sheets input + output</SelectItem>
+                                    <SelectItem value="meta-ads">Meta Ads input + Google Sheets output</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="meta_access_token" className="text-xs">Meta Access Token</Label>
+                                <Input
+                                    id="meta_access_token"
+                                    type="password"
+                                    value={campaignConfig.meta_ads?.access_token || ''}
+                                    onChange={(e) => setCampaignConfig(prev => ({
+                                        ...prev,
+                                        meta_ads: {
+                                            ...(prev.meta_ads || {}),
+                                            access_token: e.target.value,
+                                        },
+                                    }))}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="meta_lead_form_id" className="text-xs">Meta Lead Form ID</Label>
+                                <Input
+                                    id="meta_lead_form_id"
+                                    type="text"
+                                    value={campaignConfig.meta_ads?.lead_form_id || ''}
+                                    onChange={(e) => setCampaignConfig(prev => ({
+                                        ...prev,
+                                        meta_ads: {
+                                            ...(prev.meta_ads || {}),
+                                            lead_form_id: e.target.value,
+                                        },
+                                    }))}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="gs_input_sheet_url" className="text-xs">Google Input Sheet URL</Label>
+                                <Input
+                                    id="gs_input_sheet_url"
+                                    type="text"
+                                    value={campaignConfig.google_sheets?.input_sheet_url || ''}
+                                    onChange={(e) => setCampaignConfig(prev => ({
+                                        ...prev,
+                                        google_sheets: {
+                                            ...(prev.google_sheets || {}),
+                                            input_sheet_url: e.target.value,
+                                        },
+                                    }))}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="gs_output_sheet_url" className="text-xs">Google Output Sheet URL</Label>
+                                <Input
+                                    id="gs_output_sheet_url"
+                                    type="text"
+                                    value={campaignConfig.google_sheets?.output_sheet_url || ''}
+                                    onChange={(e) => setCampaignConfig(prev => ({
+                                        ...prev,
+                                        google_sheets: {
+                                            ...(prev.google_sheets || {}),
+                                            output_sheet_url: e.target.value,
+                                        },
+                                    }))}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="gs_access_token" className="text-xs">Google Access Token (optional override)</Label>
+                                <Input
+                                    id="gs_access_token"
+                                    type="password"
+                                    value={campaignConfig.google_sheets?.access_token || ''}
+                                    onChange={(e) => setCampaignConfig(prev => ({
+                                        ...prev,
+                                        google_sheets: {
+                                            ...(prev.google_sheets || {}),
+                                            access_token: e.target.value,
+                                        },
+                                    }))}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="credit_limit_inr" className="text-xs">Workflow Credit Limit (INR)</Label>
+                                <Input
+                                    id="credit_limit_inr"
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    value={campaignConfig.pricing?.credit_limit_inr ?? ''}
+                                    onChange={(e) => {
+                                        const parsed = e.target.value === '' ? undefined : Number(e.target.value);
+                                        setCampaignConfig(prev => ({
+                                            ...prev,
+                                            pricing: {
+                                                ...(prev.pricing || {}),
+                                                credit_limit_inr: Number.isFinite(parsed) ? parsed : undefined,
+                                            },
+                                        }));
+                                    }}
+                                />
                             </div>
                         </div>
                     </div>

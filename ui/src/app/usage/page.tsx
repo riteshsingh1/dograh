@@ -31,6 +31,17 @@ import { ActiveFilter, DateRangeValue } from '@/types/filters';
 // Get local timezone
 const getLocalTimezone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+interface WorkflowUsageBreakdownItem {
+    workflow_id: number;
+    workflow_name: string;
+    total_calls: number;
+    total_minutes: number;
+    total_price_inr: number;
+    total_credits_used: number;
+    credit_limit_inr?: number | null;
+    credit_remaining_inr?: number | null;
+}
+
 export default function UsagePage() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -53,6 +64,8 @@ export default function UsagePage() {
     // Daily usage breakdown state (only for paid orgs)
     const [dailyUsage, setDailyUsage] = useState<DailyUsageBreakdownResponse | null>(null);
     const [isLoadingDaily, setIsLoadingDaily] = useState(false);
+    const [workflowBreakdown, setWorkflowBreakdown] = useState<WorkflowUsageBreakdownItem[]>([]);
+    const [isLoadingWorkflowBreakdown, setIsLoadingWorkflowBreakdown] = useState(false);
 
     // Initialize filters from URL
     const [activeFilters, setActiveFilters] = useState<ActiveFilter[]>(() => {
@@ -161,6 +174,29 @@ export default function UsagePage() {
         }
     }, [auth.isAuthenticated, organizationPricing]);
 
+    // Fetch workflow-wise INR usage
+    const fetchWorkflowBreakdown = useCallback(async () => {
+        if (!auth.isAuthenticated) return;
+        setIsLoadingWorkflowBreakdown(true);
+        try {
+            const accessToken = await auth.getAccessToken();
+            const response = await fetch('/api/v1/organizations/usage/workflow-breakdown-inr', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch workflow pricing breakdown');
+            }
+            const payload = await response.json() as { items?: WorkflowUsageBreakdownItem[] };
+            setWorkflowBreakdown(payload.items || []);
+        } catch (error) {
+            console.error('Failed to fetch workflow pricing breakdown:', error);
+        } finally {
+            setIsLoadingWorkflowBreakdown(false);
+        }
+    }, [auth]);
+
     // Handle timezone change
     const handleTimezoneChange = async (timezone: ITimezoneOption | string) => {
         setSelectedTimezone(timezone);
@@ -196,8 +232,9 @@ export default function UsagePage() {
         if (auth.isAuthenticated) {
             fetchMpsCredits();
             fetchUsageHistory(currentPage, activeFilters);
+            fetchWorkflowBreakdown();
         }
-    }, [auth.isAuthenticated, currentPage, activeFilters, fetchUsageHistory, fetchMpsCredits]);
+    }, [auth.isAuthenticated, currentPage, activeFilters, fetchUsageHistory, fetchMpsCredits, fetchWorkflowBreakdown]);
 
     // Fetch daily usage when organizationPricing becomes available
     useEffect(() => {
@@ -417,6 +454,66 @@ export default function UsagePage() {
                         />
                     </div>
                 )}
+
+                {/* Workflow-wise INR Pricing/Credits */}
+                <Card className="mb-6">
+                    <CardHeader>
+                        <CardTitle>Workflow-wise Pricing (INR)</CardTitle>
+                        <CardDescription>
+                            Credits and spend per workflow for campaigns (Meta/Google Sheet flows)
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {isLoadingWorkflowBreakdown ? (
+                            <div className="animate-pulse space-y-3">
+                                {[...Array(4)].map((_, i) => (
+                                    <div key={i} className="h-10 bg-muted rounded" />
+                                ))}
+                            </div>
+                        ) : workflowBreakdown.length > 0 ? (
+                            <div className="bg-card border rounded-lg overflow-hidden shadow-sm">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow className="bg-muted/50">
+                                            <TableHead>Workflow</TableHead>
+                                            <TableHead className="text-right">Calls</TableHead>
+                                            <TableHead className="text-right">Minutes</TableHead>
+                                            <TableHead className="text-right">Price (INR)</TableHead>
+                                            <TableHead className="text-right">Credits Used</TableHead>
+                                            <TableHead className="text-right">Credit Limit</TableHead>
+                                            <TableHead className="text-right">Remaining</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {workflowBreakdown.map((item) => (
+                                            <TableRow key={item.workflow_id}>
+                                                <TableCell>{item.workflow_name}</TableCell>
+                                                <TableCell className="text-right">{item.total_calls}</TableCell>
+                                                <TableCell className="text-right">{item.total_minutes.toFixed(2)}</TableCell>
+                                                <TableCell className="text-right">₹{item.total_price_inr.toFixed(2)}</TableCell>
+                                                <TableCell className="text-right">{item.total_credits_used.toFixed(2)}</TableCell>
+                                                <TableCell className="text-right">
+                                                    {item.credit_limit_inr !== null && item.credit_limit_inr !== undefined
+                                                        ? `₹${item.credit_limit_inr.toFixed(2)}`
+                                                        : '-'}
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    {item.credit_remaining_inr !== null && item.credit_remaining_inr !== undefined
+                                                        ? `₹${item.credit_remaining_inr.toFixed(2)}`
+                                                        : '-'}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        ) : (
+                            <p className="text-muted-foreground text-sm">
+                                No workflow usage data available yet.
+                            </p>
+                        )}
+                    </CardContent>
+                </Card>
 
                 {/* Filter Builder */}
                 <div className="mb-6">
