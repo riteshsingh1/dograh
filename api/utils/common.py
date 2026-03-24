@@ -4,6 +4,7 @@ Shared functions used across the application.
 """
 
 import re
+from urllib.parse import urlparse
 
 from loguru import logger
 
@@ -174,4 +175,28 @@ async def get_backend_endpoints() -> tuple[str, str]:
         raise ValueError(
             "No tunnel URL available. Please set BACKEND_API_ENDPOINT environment "
             "variable or ensure cloudflared service is running."
+        )
+
+
+def ensure_public_webhook_endpoint(endpoint_url: str, provider_name: str) -> None:
+    """
+    Validate that a telephony webhook endpoint is publicly reachable.
+
+    Telephony providers (Twilio, Vonage, etc.) cannot fetch webhook URLs from
+    localhost or other loopback-only hosts.
+    """
+    parsed = urlparse(endpoint_url)
+    host = (parsed.hostname or "").lower()
+
+    if not host:
+        raise ValueError(
+            f"Invalid webhook endpoint URL for {provider_name}: '{endpoint_url}'"
+        )
+
+    localhost_hosts = {"localhost", "127.0.0.1", "0.0.0.0", "::1"}
+    if host in localhost_hosts:
+        raise ValueError(
+            f"Telephony provider '{provider_name}' cannot use localhost callback URL "
+            f"({endpoint_url}). Set BACKEND_API_ENDPOINT to a public tunnel/domain "
+            "like https://<your-domain> or https://<id>.ngrok-free.app."
         )

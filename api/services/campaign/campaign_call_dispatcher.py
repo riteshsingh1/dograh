@@ -17,7 +17,7 @@ from api.services.campaign.errors import (
 from api.services.campaign.rate_limiter import rate_limiter
 from api.services.telephony.base import TelephonyProvider
 from api.services.telephony.factory import get_telephony_provider
-from api.utils.common import get_backend_endpoints
+from api.utils.common import ensure_public_webhook_endpoint, get_backend_endpoints
 
 
 class CampaignCallDispatcher:
@@ -60,6 +60,24 @@ class CampaignCallDispatcher:
         if campaign.state != "running":
             logger.info(
                 f"Campaign {campaign_id} is not in running state: {campaign.state}"
+            )
+            return 0
+
+        # Enforce workflow-level INR credit limit before dispatching any new calls.
+        within_limit, reason = await self._check_workflow_credit_limit(campaign)
+        if not within_limit:
+            logger.warning(
+                f"Campaign {campaign_id} paused due to workflow credit limit: {reason}"
+            )
+            metadata = dict(campaign.orchestrator_metadata or {})
+            metadata["credit_limit_pause"] = {
+                "reason": reason,
+                "paused_at": datetime.now(UTC).isoformat(),
+            }
+            await db_client.update_campaign(
+                campaign_id=campaign_id,
+                state="paused",
+                orchestrator_metadata=metadata,
             )
             return 0
 
@@ -155,6 +173,41 @@ class CampaignCallDispatcher:
                     )
 
         return processed_count
+
+    async def _check_workflow_credit_limit(self, campaign: any) -> tuple[bool, str]:
+        """Check if workflow-level INR credit limit is still available."""
+        workflow = await db_client.get_workflow_by_id(campaign.workflow_id)
+        if not workflow:
+            return True, ""
+
+        campaign_cfg = (workflow.workflow_configurations or {}).get(
+            "campaign_integrations", {}
+        )
+        pricing_cfg = campaign_cfg.get("pricing", {})
+        credit_limit = pricing_cfg.get("credit_limit_inr")
+
+        if credit_limit is None:
+            return True, ""
+
+        try:
+            credit_limit_value = float(credit_limit)
+        except (TypeError, ValueError):
+            return True, ""
+
+        if credit_limit_value <= 0:
+            return True, ""
+
+        usage = await db_client.get_workflow_credit_usage_inr(
+            organization_id=campaign.organization_id,
+            workflow_id=campaign.workflow_id,
+        )
+        used = float(usage.get("total_credits_used", 0.0))
+        if used >= credit_limit_value:
+            return (
+                False,
+                f"workflow credit limit reached (used={used:.2f} INR, limit={credit_limit_value:.2f} INR)",
+            )
+        return True, ""
 
     async def dispatch_call(
         self, queued_run: QueuedRunModel, campaign: any, slot_id: str
@@ -256,6 +309,7 @@ class CampaignCallDispatcher:
         try:
             # Construct webhook URL with parameters
             backend_endpoint, _ = await get_backend_endpoints()
+            ensure_public_webhook_endpoint(backend_endpoint, provider.PROVIDER_NAME)
             webhook_endpoint = provider.WEBHOOK_ENDPOINT
             webhook_url = (
                 f"{backend_endpoint}/api/v1/telephony/{webhook_endpoint}"

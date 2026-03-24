@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Any, Optional
 from zoneinfo import ZoneInfo
 
 from dateutil.relativedelta import relativedelta
@@ -18,6 +18,7 @@ from api.db.models import (
     WorkflowRunModel,
 )
 from api.schemas.user_configuration import UserConfiguration
+from api.services.pricing.inr_pricing import calculate_inr_pricing
 
 
 class OrganizationUsageClient(BaseDBClient):
@@ -440,6 +441,121 @@ class OrganizationUsageClient(BaseDBClient):
                 "total_cost_usd": round(total_cost_usd, 2),
                 "total_dograh_tokens": round(total_dograh_tokens, 0),
                 "currency": "USD",
+            }
+
+    async def get_workflow_usage_breakdown_inr(
+        self,
+        organization_id: int,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+    ) -> list[dict[str, Any]]:
+        """Aggregate usage and pricing per workflow in INR for an organization."""
+        async with self.async_session() as session:
+            workflow_query = select(WorkflowModel).where(
+                WorkflowModel.organization_id == organization_id
+            )
+            workflow_result = await session.execute(workflow_query)
+            workflows = list(workflow_result.scalars().all())
+            if not workflows:
+                return []
+
+            workflow_map = {w.id: w for w in workflows}
+            workflow_ids = list(workflow_map.keys())
+
+            run_query = (
+                select(WorkflowRunModel)
+                .where(
+                    WorkflowRunModel.workflow_id.in_(workflow_ids),
+                    WorkflowRunModel.is_completed.is_(True),
+                )
+                .order_by(WorkflowRunModel.created_at.desc())
+            )
+            if start_date:
+                run_query = run_query.where(WorkflowRunModel.created_at >= start_date)
+            if end_date:
+                run_query = run_query.where(WorkflowRunModel.created_at <= end_date)
+
+            run_result = await session.execute(run_query)
+            runs = list(run_result.scalars().all())
+
+            aggregates: dict[int, dict[str, Any]] = {}
+            for workflow in workflows:
+                campaign_cfg = (workflow.workflow_configurations or {}).get(
+                    "campaign_integrations", {}
+                )
+                pricing_cfg = campaign_cfg.get("pricing", {})
+                credit_limit_inr = pricing_cfg.get("credit_limit_inr")
+                aggregates[workflow.id] = {
+                    "workflow_id": workflow.id,
+                    "workflow_name": workflow.name,
+                    "total_calls": 0,
+                    "total_minutes": 0.0,
+                    "total_price_inr": 0.0,
+                    "total_credits_used": 0.0,
+                    "credit_limit_inr": float(credit_limit_inr)
+                    if credit_limit_inr is not None
+                    else None,
+                    "credit_remaining_inr": None,
+                }
+
+            for run in runs:
+                bucket = aggregates.get(run.workflow_id)
+                if not bucket:
+                    continue
+                pricing = calculate_inr_pricing(run.usage_info, run.cost_info)
+                bucket["total_calls"] += 1
+                bucket["total_minutes"] += pricing.duration_minutes
+                bucket["total_price_inr"] += pricing.total_inr
+                bucket["total_credits_used"] += pricing.credits_used
+
+            output = []
+            for _, item in aggregates.items():
+                if item["credit_limit_inr"] is not None:
+                    item["credit_remaining_inr"] = max(
+                        float(item["credit_limit_inr"]) - float(item["total_credits_used"]),
+                        0.0,
+                    )
+                item["total_minutes"] = round(float(item["total_minutes"]), 2)
+                item["total_price_inr"] = round(float(item["total_price_inr"]), 2)
+                item["total_credits_used"] = round(float(item["total_credits_used"]), 2)
+                output.append(item)
+
+            output.sort(key=lambda x: x["total_price_inr"], reverse=True)
+            return output
+
+    async def get_workflow_credit_usage_inr(
+        self,
+        organization_id: int,
+        workflow_id: int,
+    ) -> dict[str, float]:
+        """Get total INR credits used for a workflow across completed runs."""
+        async with self.async_session() as session:
+            run_query = (
+                select(WorkflowRunModel)
+                .join(WorkflowModel, WorkflowModel.id == WorkflowRunModel.workflow_id)
+                .where(
+                    WorkflowModel.organization_id == organization_id,
+                    WorkflowRunModel.workflow_id == workflow_id,
+                    WorkflowRunModel.is_completed.is_(True),
+                )
+            )
+            run_result = await session.execute(run_query)
+            runs = list(run_result.scalars().all())
+
+            total_credits_used = 0.0
+            total_price_inr = 0.0
+            total_minutes = 0.0
+
+            for run in runs:
+                pricing = calculate_inr_pricing(run.usage_info, run.cost_info)
+                total_credits_used += pricing.credits_used
+                total_price_inr += pricing.total_inr
+                total_minutes += pricing.duration_minutes
+
+            return {
+                "total_credits_used": round(total_credits_used, 2),
+                "total_price_inr": round(total_price_inr, 2),
+                "total_minutes": round(total_minutes, 2),
             }
 
     async def update_organization_quota(

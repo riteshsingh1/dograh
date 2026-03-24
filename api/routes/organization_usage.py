@@ -81,6 +81,21 @@ class DailyUsageBreakdownResponse(BaseModel):
     currency: Optional[str] = None
 
 
+class WorkflowUsageBreakdownItem(BaseModel):
+    workflow_id: int
+    workflow_name: str
+    total_calls: int
+    total_minutes: float
+    total_price_inr: float
+    total_credits_used: float
+    credit_limit_inr: Optional[float] = None
+    credit_remaining_inr: Optional[float] = None
+
+
+class WorkflowUsageBreakdownResponse(BaseModel):
+    items: List[WorkflowUsageBreakdownItem]
+
+
 @router.get("/usage/current-period", response_model=CurrentUsageResponse)
 async def get_current_period_usage(user: UserModel = Depends(get_user)):
     """Get current billing period usage for the user's organization."""
@@ -222,4 +237,29 @@ async def get_daily_usage_breakdown(
     except HTTPException:
         raise
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/usage/workflow-breakdown-inr", response_model=WorkflowUsageBreakdownResponse)
+async def get_workflow_usage_breakdown_inr(
+    start_date: Optional[str] = Query(None, description="ISO format date string"),
+    end_date: Optional[str] = Query(None, description="ISO format date string"),
+    user: UserModel = Depends(get_user),
+):
+    """Get workflow-wise usage, credits, and INR pricing summary."""
+    if not user.selected_organization_id:
+        raise HTTPException(status_code=400, detail="No organization selected")
+
+    start_dt = datetime.fromisoformat(start_date) if start_date else None
+    end_dt = datetime.fromisoformat(end_date) if end_date else None
+
+    try:
+        items = await db_client.get_workflow_usage_breakdown_inr(
+            organization_id=user.selected_organization_id,
+            start_date=start_dt,
+            end_date=end_dt,
+        )
+        return WorkflowUsageBreakdownResponse(items=items)
+    except Exception as e:
+        logger.error(f"Failed to fetch workflow usage breakdown in INR: {e}")
         raise HTTPException(status_code=500, detail=str(e))

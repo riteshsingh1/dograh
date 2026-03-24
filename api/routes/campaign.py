@@ -151,7 +151,7 @@ class CircuitBreakerConfigResponse(BaseModel):
 class CreateCampaignRequest(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     workflow_id: int
-    source_type: str = Field(..., pattern="^(google-sheet|csv)$")
+    source_type: str = Field(..., pattern="^(google-sheet|csv|meta-ads)$")
     source_id: str  # Google Sheet URL or CSV file key
     retry_config: Optional[RetryConfigRequest] = None
     max_concurrency: Optional[int] = Field(default=None, ge=1, le=100)
@@ -286,7 +286,9 @@ async def create_campaign(
     # Validate source data (phone_number column and format)
     sync_service = get_sync_service(request.source_type)
     validation_result = await sync_service.validate_source(
-        request.source_id, user.selected_organization_id
+        request.source_id,
+        user.selected_organization_id,
+        request.workflow_id,
     )
     if not validation_result.is_valid:
         raise HTTPException(status_code=400, detail=validation_result.error.message)

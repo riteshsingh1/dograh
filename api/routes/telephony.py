@@ -43,7 +43,7 @@ from api.services.telephony.transfer_event_protocol import (
     TransferEvent,
     TransferEventType,
 )
-from api.utils.common import get_backend_endpoints
+from api.utils.common import ensure_public_webhook_endpoint, get_backend_endpoints
 from api.utils.telephony_helper import (
     generic_hangup_response,
     normalize_webhook_data,
@@ -199,6 +199,7 @@ async def initiate_call(
 
     # Construct webhook URL based on provider type
     backend_endpoint, _ = await get_backend_endpoints()
+    ensure_public_webhook_endpoint(backend_endpoint, provider.PROVIDER_NAME)
 
     webhook_endpoint = provider.WEBHOOK_ENDPOINT
 

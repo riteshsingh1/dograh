@@ -360,6 +360,25 @@ class CampaignOrchestrator:
                 )
                 return
 
+            # Enforce workflow-level INR credit limit before scheduling.
+            within_limit, reason = await self._check_workflow_credit_limit(campaign)
+            if not within_limit:
+                logger.warning(
+                    f"campaign_id: {campaign_id} - Pausing campaign due to credit limit: {reason}"
+                )
+                metadata = dict(campaign.orchestrator_metadata or {})
+                metadata["credit_limit_pause"] = {
+                    "reason": reason,
+                    "paused_at": datetime.now(UTC).isoformat(),
+                }
+                await db_client.update_campaign(
+                    campaign_id=campaign_id,
+                    state="paused",
+                    orchestrator_metadata=metadata,
+                )
+                self._clear_campaign_state(campaign_id)
+                return
+
             # Check schedule window before scheduling
             if not self._is_within_schedule(campaign):
                 logger.info(
@@ -426,6 +445,43 @@ class CampaignOrchestrator:
         finally:
             # Release lock after a short delay
             asyncio.create_task(self._release_lock_after_delay(campaign_id, 5))
+
+    async def _check_workflow_credit_limit(
+        self, campaign: CampaignModel
+    ) -> tuple[bool, str]:
+        """Check if workflow-level INR credit limit is still available."""
+        workflow = await db_client.get_workflow_by_id(campaign.workflow_id)
+        if not workflow:
+            return True, ""
+
+        campaign_cfg = (workflow.workflow_configurations or {}).get(
+            "campaign_integrations", {}
+        )
+        pricing_cfg = campaign_cfg.get("pricing", {})
+        credit_limit = pricing_cfg.get("credit_limit_inr")
+
+        if credit_limit is None:
+            return True, ""
+
+        try:
+            credit_limit_value = float(credit_limit)
+        except (TypeError, ValueError):
+            return True, ""
+
+        if credit_limit_value <= 0:
+            return True, ""
+
+        usage = await db_client.get_workflow_credit_usage_inr(
+            organization_id=campaign.organization_id,
+            workflow_id=campaign.workflow_id,
+        )
+        used = float(usage.get("total_credits_used", 0.0))
+        if used >= credit_limit_value:
+            return (
+                False,
+                f"workflow credit limit reached (used={used:.2f} INR, limit={credit_limit_value:.2f} INR)",
+            )
+        return True, ""
 
     async def _release_lock_after_delay(self, campaign_id: int, delay: int):
         """Release processing lock after delay."""

@@ -55,7 +55,10 @@ class GoogleSheetsSyncService(CampaignSourceSyncService):
         return await self._fetch_sheet_data(sheet_id, f"{sheet_name}!A:Z", access_token)
 
     async def validate_source(
-        self, source_id: str, organization_id: Optional[int] = None
+        self,
+        source_id: str,
+        organization_id: Optional[int] = None,
+        workflow_id: Optional[int] = None,
     ) -> ValidationResult:
         """Validate a Google Sheet source for campaign creation."""
         if organization_id is None:

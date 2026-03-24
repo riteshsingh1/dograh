@@ -15,7 +15,7 @@ from api.db import db_client
 from api.enums import TriggerState
 from api.services.quota_service import check_dograh_quota_by_user_id
 from api.services.telephony.factory import get_telephony_provider
-from api.utils.common import get_backend_endpoints
+from api.utils.common import ensure_public_webhook_endpoint, get_backend_endpoints
 
 router = APIRouter(prefix="/public/agent")
 
@@ -148,6 +148,7 @@ async def initiate_call(
 
     # 9. Construct webhook URL for telephony provider callback
     backend_endpoint, _ = await get_backend_endpoints()
+    ensure_public_webhook_endpoint(backend_endpoint, provider.PROVIDER_NAME)
     webhook_endpoint = provider.WEBHOOK_ENDPOINT
 
     webhook_url = (

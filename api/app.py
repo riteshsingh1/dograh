@@ -44,8 +44,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Dograh API",
-    description="API for the Dograh app",
+    title="TestOFire Voice Agent API",
+    description="API for the TestOFire Voice Agent app",
     version="1.0.0",
     openapi_url=f"{API_PREFIX}/openapi.json",
     lifespan=lifespan,

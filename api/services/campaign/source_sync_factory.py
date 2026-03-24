@@ -1,6 +1,7 @@
 from api.services.campaign.source_sync import CampaignSourceSyncService
 from api.services.campaign.sources.csv import CSVSyncService
 from api.services.campaign.sources.google_sheets import GoogleSheetsSyncService
+from api.services.campaign.sources.meta_ads import MetaAdsSyncService
 
 
 def get_sync_service(source_type: str) -> CampaignSourceSyncService:
@@ -9,6 +10,7 @@ def get_sync_service(source_type: str) -> CampaignSourceSyncService:
     services = {
         "google-sheet": GoogleSheetsSyncService,
         "csv": CSVSyncService,
+        "meta-ads": MetaAdsSyncService,
         # Add more as needed: "hubspot": HubSpotSyncService,
     }
 

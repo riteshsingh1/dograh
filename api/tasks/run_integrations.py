@@ -9,6 +9,7 @@ from loguru import logger
 from api.constants import BACKEND_API_ENDPOINT
 from api.db import db_client
 from api.db.models import WorkflowRunModel
+from api.services.campaign.output_sync import campaign_output_sync_service
 from api.services.workflow.qa import run_per_node_qa_analysis
 from api.utils.credential_auth import build_auth_header
 from api.utils.template_renderer import render_template
@@ -239,6 +240,10 @@ async def run_integrations_post_workflow_run(_ctx, workflow_run_id: int):
         # Step 6: Execute webhooks
         if not webhook_nodes:
             logger.debug("No webhook nodes in workflow")
+            if has_campaign:
+                await campaign_output_sync_service.sync_workflow_run_output(
+                    workflow_run_id
+                )
             return
 
         logger.info(f"Found {len(webhook_nodes)} webhook nodes to execute")
@@ -260,6 +265,9 @@ async def run_integrations_post_workflow_run(_ctx, workflow_run_id: int):
                 logger.warning(
                     f"Failed to execute webhook '{webhook_data.get('name', 'unknown')}': {e}"
                 )
+
+        if has_campaign:
+            await campaign_output_sync_service.sync_workflow_run_output(workflow_run_id)
 
     except Exception as e:
         logger.error(f"Error running integrations: {e}", exc_info=True)
