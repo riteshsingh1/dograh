@@ -153,6 +153,7 @@ class CreateCampaignRequest(BaseModel):
     workflow_id: int
     source_type: str = Field(..., pattern="^(google-sheet|csv|meta-ads)$")
     source_id: str  # Google Sheet URL or CSV file key
+    source_auth: Optional[dict] = None
     retry_config: Optional[RetryConfigRequest] = None
     max_concurrency: Optional[int] = Field(default=None, ge=1, le=100)
     schedule_config: Optional[ScheduleConfigRequest] = None
@@ -289,6 +290,7 @@ async def create_campaign(
         request.source_id,
         user.selected_organization_id,
         request.workflow_id,
+        request.source_auth,
     )
     if not validation_result.is_valid:
         raise HTTPException(status_code=400, detail=validation_result.error.message)
@@ -324,6 +326,7 @@ async def create_campaign(
         max_concurrency=request.max_concurrency,
         schedule_config=schedule_config,
         circuit_breaker=circuit_breaker_config,
+        source_auth=request.source_auth,
     )
 
     return _build_campaign_response(campaign, workflow_name)

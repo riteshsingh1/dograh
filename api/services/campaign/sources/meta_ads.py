@@ -22,6 +22,7 @@ class MetaAdsSyncService(CampaignSourceSyncService):
         source_id: str,
         organization_id: Optional[int] = None,
         workflow_id: Optional[int] = None,
+        source_auth: Optional[dict[str, Any]] = None,
     ) -> ValidationResult:
         if not workflow_id:
             return ValidationResult(

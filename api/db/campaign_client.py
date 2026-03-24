@@ -23,6 +23,7 @@ class CampaignClient(BaseDBClient):
         max_concurrency: Optional[int] = None,
         schedule_config: Optional[dict] = None,
         circuit_breaker: Optional[dict] = None,
+        source_auth: Optional[dict] = None,
     ) -> CampaignModel:
         """Create a new campaign"""
         async with self.async_session() as session:
@@ -34,6 +35,8 @@ class CampaignClient(BaseDBClient):
                 orchestrator_metadata["schedule_config"] = schedule_config
             if circuit_breaker is not None:
                 orchestrator_metadata["circuit_breaker"] = circuit_breaker
+            if source_auth is not None:
+                orchestrator_metadata["source_auth"] = source_auth
 
             campaign = CampaignModel(
                 name=name,

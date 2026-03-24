@@ -5,6 +5,7 @@ import httpx
 from loguru import logger
 
 from api.db import db_client
+from api.services.campaign.google_auth import resolve_google_access_token
 from api.services.campaign.source_sync import (
     CampaignSourceSyncService,
     ValidationError,
@@ -20,8 +21,14 @@ class GoogleSheetsSyncService(CampaignSourceSyncService):
         self.nango_service = NangoService()
         self.sheets_api_base = "https://sheets.googleapis.com/v4/spreadsheets"
 
-    async def _get_access_token(self, organization_id: int) -> str:
+    async def _get_access_token(
+        self, organization_id: int, source_auth: Optional[dict] = None
+    ) -> str:
         """Get OAuth access token for Google Sheets via Nango."""
+        token = await resolve_google_access_token(source_auth)
+        if token:
+            return token
+
         integrations = await db_client.get_integrations_by_organization_id(
             organization_id
         )
@@ -40,10 +47,13 @@ class GoogleSheetsSyncService(CampaignSourceSyncService):
         return token_data["credentials"]["access_token"]
 
     async def _fetch_all_sheet_data(
-        self, sheet_url: str, organization_id: int
+        self,
+        sheet_url: str,
+        organization_id: int,
+        source_auth: Optional[dict] = None,
     ) -> List[List[str]]:
         """Fetch all data from a Google Sheet. Returns all rows including header."""
-        access_token = await self._get_access_token(organization_id)
+        access_token = await self._get_access_token(organization_id, source_auth)
         sheet_id = self._extract_sheet_id(sheet_url)
 
         metadata = await self._get_sheet_metadata(sheet_id, access_token)
@@ -59,6 +69,7 @@ class GoogleSheetsSyncService(CampaignSourceSyncService):
         source_id: str,
         organization_id: Optional[int] = None,
         workflow_id: Optional[int] = None,
+        source_auth: Optional[dict] = None,
     ) -> ValidationResult:
         """Validate a Google Sheet source for campaign creation."""
         if organization_id is None:
@@ -80,7 +91,11 @@ class GoogleSheetsSyncService(CampaignSourceSyncService):
             )
 
         try:
-            rows = await self._fetch_all_sheet_data(source_id, organization_id)
+            rows = await self._fetch_all_sheet_data(
+                source_id,
+                organization_id,
+                source_auth,
+            )
         except ValueError as e:
             return ValidationResult(
                 is_valid=False,
@@ -124,7 +139,9 @@ class GoogleSheetsSyncService(CampaignSourceSyncService):
             raise ValueError(f"Campaign {campaign_id} not found")
 
         rows = await self._fetch_all_sheet_data(
-            campaign.source_id, campaign.organization_id
+            campaign.source_id,
+            campaign.organization_id,
+            (campaign.orchestrator_metadata or {}).get("source_auth", {}),
         )
 
         if not rows or len(rows) < 2:

@@ -6,6 +6,7 @@ import httpx
 from loguru import logger
 
 from api.db import db_client
+from api.services.campaign.google_auth import resolve_google_access_token
 from api.services.integrations.nango import NangoService
 from api.services.pricing.inr_pricing import calculate_inr_pricing
 from api.utils.transcript import generate_transcript_text
@@ -33,17 +34,30 @@ class CampaignOutputSyncService:
         if not organization_id:
             return
 
+        campaign = await db_client.get_campaign_by_id(workflow_run.campaign_id)
+        campaign_source_auth = (
+            (campaign.orchestrator_metadata or {}).get("source_auth", {})
+            if campaign
+            else {}
+        )
+
         campaign_cfg = (workflow.workflow_configurations or {}).get(
             "campaign_integrations", {}
         )
         google_cfg = campaign_cfg.get("google_sheets", {})
-        output_sheet_url = (google_cfg.get("output_sheet_url") or "").strip()
+        output_sheet_url = (
+            campaign_source_auth.get("output_sheet_url")
+            or google_cfg.get("output_sheet_url")
+            or ""
+        ).strip()
         if not output_sheet_url:
             return
 
         access_token = await self._get_google_access_token(
             organization_id=organization_id,
-            configured_token=google_cfg.get("access_token"),
+            source_auth=campaign_source_auth
+            if campaign_source_auth
+            else {"access_token": google_cfg.get("access_token")},
         )
         if not access_token:
             logger.warning(
@@ -65,9 +79,9 @@ class CampaignOutputSyncService:
             )
 
     async def _get_google_access_token(
-        self, organization_id: int, configured_token: Optional[str]
+        self, organization_id: int, source_auth: Optional[dict]
     ) -> Optional[str]:
-        token = (configured_token or "").strip()
+        token = await resolve_google_access_token(source_auth)
         if token:
             return token
 

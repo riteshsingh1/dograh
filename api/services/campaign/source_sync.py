@@ -121,6 +121,7 @@ class CampaignSourceSyncService(ABC):
         source_id: str,
         organization_id: Optional[int] = None,
         workflow_id: Optional[int] = None,
+        source_auth: Optional[Dict[str, Any]] = None,
     ) -> ValidationResult:
         """Validate source data before campaign creation."""
         pass

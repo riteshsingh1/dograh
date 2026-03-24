@@ -43,6 +43,7 @@ class CSVSyncService(CampaignSourceSyncService):
         source_id: str,
         organization_id: Optional[int] = None,
         workflow_id: Optional[int] = None,
+        source_auth: Optional[dict] = None,
     ) -> ValidationResult:
         """Validate a CSV source file for campaign creation."""
         try:

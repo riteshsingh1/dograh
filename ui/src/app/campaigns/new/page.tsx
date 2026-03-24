@@ -41,6 +41,12 @@ export default function NewCampaignPage() {
     const [sourceId, setSourceId] = useState('');
     const [selectedFileName, setSelectedFileName] = useState('');
     const [metaLeadFormId, setMetaLeadFormId] = useState('');
+    const [googleAuthType, setGoogleAuthType] = useState<'access_token' | 'oauth_refresh_token'>('oauth_refresh_token');
+    const [googleAccessTokenInput, setGoogleAccessTokenInput] = useState('');
+    const [googleRefreshTokenInput, setGoogleRefreshTokenInput] = useState('');
+    const [googleClientIdInput, setGoogleClientIdInput] = useState('');
+    const [googleClientSecretInput, setGoogleClientSecretInput] = useState('');
+    const [googleOutputSheetUrl, setGoogleOutputSheetUrl] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [createError, setCreateError] = useState<string | null>(null);
     const [userAccessToken, setUserAccessToken] = useState<string>('');
@@ -201,6 +207,18 @@ export default function NewCampaignPage() {
             toast.error('Please fill in all fields');
             return;
         }
+        if (sourceType === 'google-sheet') {
+            if (googleAuthType === 'access_token' && !googleAccessTokenInput.trim()) {
+                toast.error('Please provide Google access token for this campaign');
+                return;
+            }
+            if (googleAuthType === 'oauth_refresh_token') {
+                if (!googleRefreshTokenInput.trim() || !googleClientIdInput.trim() || !googleClientSecretInput.trim()) {
+                    toast.error('Please provide refresh token, client id, and client secret for Google auth');
+                    return;
+                }
+            }
+        }
 
         // Validate max_concurrency if provided
         const maxConcurrencyValue = maxConcurrency ? parseInt(maxConcurrency) : null;
@@ -258,11 +276,19 @@ export default function NewCampaignPage() {
                     workflow_id: parseInt(selectedWorkflowId),
                     source_type: sourceType,
                     source_id: sourceId,
+                    source_auth: sourceType === 'google-sheet' ? {
+                        auth_type: googleAuthType,
+                        access_token: googleAuthType === 'access_token' ? googleAccessTokenInput : undefined,
+                        refresh_token: googleAuthType === 'oauth_refresh_token' ? googleRefreshTokenInput : undefined,
+                        client_id: googleAuthType === 'oauth_refresh_token' ? googleClientIdInput : undefined,
+                        client_secret: googleAuthType === 'oauth_refresh_token' ? googleClientSecretInput : undefined,
+                        output_sheet_url: googleOutputSheetUrl || undefined,
+                    } : undefined,
                     retry_config: retryConfig,
                     max_concurrency: maxConcurrencyValue,
                     schedule_config: scheduleConfig,
                     circuit_breaker: circuitBreakerConfig,
-                },
+                } as any,
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
                 }
@@ -294,11 +320,6 @@ export default function NewCampaignPage() {
     // Handle back navigation
     const handleBack = () => {
         router.push('/campaigns');
-    };
-
-    // Handle sheet selection
-    const handleSheetSelected = (sheetUrl: string) => {
-        setSourceId(sheetUrl);
     };
 
     // Handle CSV file upload
@@ -396,6 +417,12 @@ export default function NewCampaignPage() {
                                         setSourceId('');
                                         setSelectedFileName('');
                                         setMetaLeadFormId('');
+                                        setGoogleAuthType('oauth_refresh_token');
+                                        setGoogleAccessTokenInput('');
+                                        setGoogleRefreshTokenInput('');
+                                        setGoogleClientIdInput('');
+                                        setGoogleClientSecretInput('');
+                                        setGoogleOutputSheetUrl('');
                                     }}
                                     required
                                 >
@@ -415,9 +442,20 @@ export default function NewCampaignPage() {
 
                             {sourceType === 'google-sheet' ? (
                                 <GoogleSheetSelector
-                                    accessToken={userAccessToken}
-                                    onSheetSelected={handleSheetSelected}
                                     selectedSheetUrl={sourceId}
+                                    outputSheetUrl={googleOutputSheetUrl}
+                                    authType={googleAuthType}
+                                    googleAccessToken={googleAccessTokenInput}
+                                    refreshToken={googleRefreshTokenInput}
+                                    clientId={googleClientIdInput}
+                                    clientSecret={googleClientSecretInput}
+                                    onSheetUrlChange={setSourceId}
+                                    onOutputSheetUrlChange={setGoogleOutputSheetUrl}
+                                    onAuthTypeChange={setGoogleAuthType}
+                                    onGoogleAccessTokenChange={setGoogleAccessTokenInput}
+                                    onRefreshTokenChange={setGoogleRefreshTokenInput}
+                                    onClientIdChange={setGoogleClientIdInput}
+                                    onClientSecretChange={setGoogleClientSecretInput}
                                 />
                             ) : sourceType === 'meta-ads' ? (
                                 <div className="space-y-2">
