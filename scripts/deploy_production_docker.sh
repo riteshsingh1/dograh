@@ -94,7 +94,6 @@ ENV_FILE=".env.production"
 if [[ ! -f "$ENV_FILE" ]]; then
   cat > "$ENV_FILE" <<'EOF'
 # Copy/edit before deployment
-REGISTRY=ghcr.io/dograh-hq
 ENABLE_TELEMETRY=false
 BACKEND_API_ENDPOINT=https://your-domain.example.com
 BACKEND_URL=http://api:8000
