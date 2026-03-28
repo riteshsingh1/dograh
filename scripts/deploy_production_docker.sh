@@ -26,14 +26,14 @@ set -euo pipefail
 #   --minio-port 9002
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DOMAIN=""
-API_DOMAIN=""
-BACKEND_ENDPOINT=""
+DOMAIN="app.callorax.com"
+API_DOMAIN="api.callorax.com"
+BACKEND_ENDPOINT="api.callorax.com"
 CONFIGURE_NGINX=false
 ENABLE_HTTPS=false
 INCLUDE_COTURN=false
 SKIP_MIGRATIONS=false
-CERTBOT_EMAIL=""
+CERTBOT_EMAIL="1124ritesh@gmail.com"
 HOST_API_PORT="${HOST_API_PORT:-8000}"
 HOST_UI_PORT="${HOST_UI_PORT:-3010}"
 HOST_MINIO_PORT="${HOST_MINIO_PORT:-9000}"
@@ -95,15 +95,15 @@ if [[ ! -f "$ENV_FILE" ]]; then
   cat > "$ENV_FILE" <<'EOF'
 # Copy/edit before deployment
 ENABLE_TELEMETRY=false
-BACKEND_API_ENDPOINT=https://your-domain.example.com
+BACKEND_API_ENDPOINT=https://app.callorax.com
 BACKEND_URL=http://api:8000
-CERTBOT_EMAIL=ops@example.com
+CERTBOT_EMAIL=1124ritesh@gmail.com
 HOST_API_PORT=8000
 HOST_UI_PORT=3010
 HOST_MINIO_PORT=9000
 TURN_HOST=
 TURN_SECRET=
-OSS_JWT_SECRET=ChangeMeInProduction
+OSS_JWT_SECRET=Ci1qjzMaU/OVv4DgcD8Jmw==
 EOF
   echo "Created $ENV_FILE template. Update it and rerun."
   exit 1
