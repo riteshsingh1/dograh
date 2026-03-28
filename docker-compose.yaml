@@ -11,7 +11,7 @@ services:
         max-size: "10m"
         max-file: "3"
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -25,7 +25,7 @@ services:
   redis:
     image: redis:7
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     command: >
       --requirepass redissecret
     volumes:
@@ -200,10 +200,11 @@ services:
       - "5349:5349/tcp"
       - "49152-49200:49152-49200/udp"
     volumes:
-      - ./turnserver.conf:/etc/coturn/turnserver.conf:ro
+      - ./config/coturn/turnserver.conf:/etc/coturn/turnserver.conf:ro
     command:
       - -c
       - /etc/coturn/turnserver.conf
+      - --static-auth-secret=${TURN_SECRET:-dograh-turn-secret-change-in-production}
     networks:
       - app-network
 
