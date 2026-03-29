@@ -78,7 +78,6 @@ services:
     build:
       context: .
       dockerfile: api/Dockerfile
-    image: dograh-api:local
     volumes:
       - shared-tmp:/tmp
     environment:
@@ -150,7 +149,6 @@ services:
     build:
       context: .
       dockerfile: ui/Dockerfile
-    image: dograh-ui:local
     environment:
       # Server-side URL (SSR, internal Docker network)
       BACKEND_URL: "${BACKEND_URL:-http://api:8000}"

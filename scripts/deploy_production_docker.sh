@@ -145,7 +145,6 @@ services:
     build:
       context: .
       dockerfile: api/Dockerfile
-    image: dograh-api:prod-local
     environment:
       ENVIRONMENT: "production"
       LOG_LEVEL: "INFO"
@@ -155,7 +154,6 @@ services:
     build:
       context: .
       dockerfile: ui/Dockerfile
-    image: dograh-ui:prod-local
     environment:
       NODE_ENV: "production"
     restart: unless-stopped
@@ -176,7 +174,7 @@ echo "Pulling base images..."
 docker compose "${COMPOSE_ARGS[@]}" pull postgres redis minio cloudflared || true
 
 echo "Building API/UI with your changes..."
-docker compose "${COMPOSE_ARGS[@]}" build --pull api ui
+docker compose "${COMPOSE_ARGS[@]}" build api ui
 
 echo "Starting core services..."
 docker compose "${COMPOSE_ARGS[@]}" up -d postgres redis minio cloudflared api ui
