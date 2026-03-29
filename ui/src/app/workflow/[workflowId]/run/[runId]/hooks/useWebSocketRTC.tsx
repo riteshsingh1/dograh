@@ -117,7 +117,18 @@ export const useWebSocketRTC = ({ workflowId, workflowRunId, accessToken, initia
             iceServers
         };
 
-        const pc = new RTCPeerConnection(config);
+        let pc: RTCPeerConnection;
+        try {
+            pc = new RTCPeerConnection(config);
+        } catch (e) {
+            // Firefox throws NS_ERROR_UNEXPECTED for invalid ICE server configs.
+            // Fall back to STUN-only so the call can still connect.
+            logger.warn(`RTCPeerConnection failed with TURN config, falling back to STUN-only: ${e}`);
+            const stunOnly: RTCConfiguration = {
+                iceServers: [{ urls: ['stun:stun.l.google.com:19302'] }]
+            };
+            pc = new RTCPeerConnection(stunOnly);
+        }
 
         // Set up ICE candidate trickling
         pc.addEventListener('icecandidate', (event) => {
