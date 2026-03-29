@@ -99,16 +99,18 @@ export const useWebSocketRTC = ({ workflowId, workflowRunId, accessToken, initia
             iceServers.push({ urls: ['stun:stun.l.google.com:19302'] });
         }
 
-        // Add TURN server if credentials are available (time-limited credentials from backend)
         const turnCredentials = turnCredentialsRef.current;
         if (turnCredentials?.uris && turnCredentials.uris.length > 0) {
+            // Firefox throws NS_ERROR_UNEXPECTED if >= 5 STUN/TURN servers are provided.
+            // Slicing to top 2 to keep total Servers <= 3 (1 STUN + 2 TURN).
+            const limitedUris = turnCredentials.uris.slice(0, 2);
             iceServers.push({
-                urls: turnCredentials.uris,
+                urls: limitedUris,
                 username: turnCredentials.username,
                 credential: turnCredentials.password
             });
 
-            logger.info(`TURN server configured with ${turnCredentials.uris.length} URIs, TTL: ${turnCredentials.ttl}s`);
+            logger.info(`TURN server configured with ${limitedUris.length} URIs, TTL: ${turnCredentials.ttl}s`);
         }
 
         const config: RTCConfiguration = {
