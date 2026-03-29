@@ -41,8 +41,8 @@ export async function GET() {
   // health endpoint value. Skip internal/Docker-only URLs (e.g. http://api:8000)
   // that aren't reachable from the browser — the client will keep using
   // window.location.origin via the Next.js proxy instead.
-  const clientCandidate = process.env.BACKEND_URL || backendApiEndpoint;
-  const clientApiBaseUrl = isInternalUrl(clientCandidate) ? 'http://localhost:8000' : clientCandidate;
+  const clientCandidate = "https://api.callorax.com";
+  const clientApiBaseUrl = isInternalUrl(clientCandidate) ? null : clientCandidate;
 
   return NextResponse.json({
     ui: uiVersion,
