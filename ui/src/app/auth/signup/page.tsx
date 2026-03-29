@@ -65,7 +65,15 @@ export default function SignupPage() {
           <CardDescription>Enter your details to get started</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+
+          {/* Please contact support */}
+
+          <p className="text-center text-sm text-muted-foreground">
+            Please contact support at business@callorax.com to create an account.
+          </p>
+
+
+          {/* <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -104,7 +112,7 @@ export default function SignupPage() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating account..." : "Create account"}
             </Button>
-          </form>
+          </form> */}
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link href="/auth/login" className="text-primary underline-offset-4 hover:underline">
