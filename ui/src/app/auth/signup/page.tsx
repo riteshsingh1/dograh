@@ -69,7 +69,7 @@ export default function SignupPage() {
           {/* Please contact support */}
 
           <p className="text-center text-sm text-muted-foreground">
-            Please contact support at business@callorax.com to create an account.
+            Please contact support at <a href="mailto:business@callorax.com">business@callorax.com</a> to create an account.
           </p>
 
 
