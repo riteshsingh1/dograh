@@ -11,7 +11,7 @@ from fastapi import HTTPException
 from loguru import logger
 
 from api.enums import WorkflowRunMode
-from api.services.telephony.base import (
+from collarx_engine.telephony.base import (
     CallInitiationResult,
     NormalizedInboundData,
     TelephonyProvider,
@@ -214,7 +214,7 @@ class PlivoProvider(TelephonyProvider):
         user_id: int,
         workflow_run_id: int,
     ) -> None:
-        from api.services.pipecat.run_pipeline import run_pipeline_vobiz
+        from collarx_engine.pipeline import run_pipeline_vobiz
 
         first_msg = await websocket.receive_text()
         start_msg = json.loads(first_msg)

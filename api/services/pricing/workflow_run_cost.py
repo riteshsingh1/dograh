@@ -2,8 +2,8 @@ from loguru import logger
 
 from api.db import db_client
 from api.enums import WorkflowRunMode
-from api.services.pricing.cost_calculator import cost_calculator
-from api.services.telephony.factory import get_telephony_provider
+from collarx_engine.pricing.calculator import cost_calculator
+from collarx_engine.telephony.factory import get_telephony_provider
 
 
 async def _fetch_telephony_cost(workflow_run) -> dict | None:

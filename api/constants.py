@@ -24,6 +24,9 @@ LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY")
 # URLs for deployment
 BACKEND_API_ENDPOINT = os.getenv("BACKEND_API_ENDPOINT", "http://localhost:8001")
 UI_APP_URL = os.getenv("UI_APP_URL", "http://localhost:3010")
+COLLARX_LICENSE_KEY = os.getenv("COLLARX_LICENSE_KEY", "")
+COLLARX_LICENSED_DOMAIN = os.getenv("COLLARX_LICENSED_DOMAIN", "")
+COLLARX_LICENSE_SERVER = os.getenv("COLLARX_LICENSE_SERVER", "https://licenses.collarx.com")
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/dograh")
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")

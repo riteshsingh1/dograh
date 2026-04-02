@@ -34,12 +34,12 @@ from api.services.workflow.dto import (
     RFEdgeDTO,
     RFNodeDTO,
 )
-from api.services.workflow.pipecat_engine import PipecatEngine
+from collarx_engine.workflow import PipecatEngine
 from api.services.workflow.pipecat_engine_custom_tools import CustomToolManager
 from api.services.workflow.pipecat_engine_variable_extractor import (
     VariableExtractionManager,
 )
-from api.services.workflow.workflow import WorkflowGraph
+from collarx_engine.workflow.graph import WorkflowGraph
 from api.tests.conftest import END_CALL_SYSTEM_PROMPT, START_CALL_SYSTEM_PROMPT
 from pipecat.frames.frames import Frame, LLMContextFrame
 from pipecat.pipeline.pipeline import Pipeline

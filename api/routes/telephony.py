@@ -30,12 +30,12 @@ from api.db.workflow_run_client import WorkflowRunClient
 from api.enums import CallType, OrganizationConfigurationKey, WorkflowRunState
 from api.errors.telephony_errors import TelephonyError
 from api.services.auth.depends import get_user
-from api.services.campaign.campaign_call_dispatcher import campaign_call_dispatcher
+from collarx_engine.campaign.dispatcher import campaign_call_dispatcher
 from api.services.campaign.campaign_event_publisher import get_campaign_event_publisher
 from api.services.campaign.circuit_breaker import circuit_breaker
 from api.services.quota_service import check_dograh_quota, check_dograh_quota_by_user_id
 from api.services.telephony.call_transfer_manager import get_call_transfer_manager
-from api.services.telephony.factory import (
+from collarx_engine.telephony.factory import (
     get_all_telephony_providers,
     get_telephony_provider,
 )

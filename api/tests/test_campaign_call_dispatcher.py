@@ -25,7 +25,7 @@ from api.db.models import (
     WorkflowModel,
     WorkflowRunModel,
 )
-from api.services.campaign.campaign_call_dispatcher import CampaignCallDispatcher
+from collarx_engine.campaign.dispatcher import CampaignCallDispatcher
 
 # =============================================================================
 # Test-specific fixtures

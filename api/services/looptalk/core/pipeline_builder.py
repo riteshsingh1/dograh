@@ -21,8 +21,8 @@ from api.services.pipecat.service_factory import (
     create_tts_service,
 )
 from api.services.workflow.dto import ReactFlowDTO
-from api.services.workflow.pipecat_engine import PipecatEngine
-from api.services.workflow.workflow import WorkflowGraph
+from collarx_engine.workflow import PipecatEngine
+from collarx_engine.workflow.graph import WorkflowGraph
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.processors.aggregators.llm_response_universal import (
     LLMContextAggregatorPair,

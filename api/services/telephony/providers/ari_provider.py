@@ -15,7 +15,7 @@ from loguru import logger
 
 from api.db import db_client
 from api.enums import WorkflowRunMode
-from api.services.telephony.base import (
+from collarx_engine.telephony.base import (
     CallInitiationResult,
     NormalizedInboundData,
     TelephonyProvider,
@@ -250,7 +250,7 @@ class ARIProvider(TelephonyProvider):
         Unlike Twilio (which sends "connected" and "start" JSON messages),
         Asterisk chan_websocket starts streaming audio immediately.
         """
-        from api.services.pipecat.run_pipeline import run_pipeline_ari
+        from collarx_engine.pipeline import run_pipeline_ari
 
         # Get channel_id from workflow run context
         workflow_run = await db_client.get_workflow_run(workflow_run_id, user_id)

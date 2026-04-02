@@ -2,8 +2,16 @@
 
 import sentry_sdk
 
-from api.constants import DEPLOYMENT_MODE, ENABLE_TELEMETRY, SENTRY_DSN
+from api.constants import (
+    COLLARX_LICENSE_KEY,
+    COLLARX_LICENSE_SERVER,
+    COLLARX_LICENSED_DOMAIN,
+    DEPLOYMENT_MODE,
+    ENABLE_TELEMETRY,
+    SENTRY_DSN,
+)
 from api.logging_config import ENVIRONMENT, setup_logging
+from collarx_engine import initialize as initialize_license
 
 # Set up logging and get the listener for cleanup
 setup_logging()
@@ -34,6 +42,11 @@ API_PREFIX = "/api/v1"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    await initialize_license(
+        license_key=COLLARX_LICENSE_KEY,
+        domain=COLLARX_LICENSED_DOMAIN,
+        license_server=COLLARX_LICENSE_SERVER,
+    )
     # warmup arq pool
     await get_arq_redis()
 

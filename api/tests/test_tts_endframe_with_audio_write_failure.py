@@ -33,11 +33,11 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from api.services.workflow.pipecat_engine import PipecatEngine
+from collarx_engine.workflow import PipecatEngine
 from api.services.workflow.pipecat_engine_variable_extractor import (
     VariableExtractionManager,
 )
-from api.services.workflow.workflow import WorkflowGraph
+from collarx_engine.workflow.graph import WorkflowGraph
 from pipecat.frames.frames import LLMContextFrame
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.runner import PipelineRunner

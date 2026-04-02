@@ -12,7 +12,7 @@ from loguru import logger
 from twilio.request_validator import RequestValidator
 
 from api.enums import WorkflowRunMode
-from api.services.telephony.base import (
+from collarx_engine.telephony.base import (
     CallInitiationResult,
     NormalizedInboundData,
     TelephonyProvider,
@@ -252,7 +252,7 @@ class TwilioProvider(TelephonyProvider):
         2. "start" event with streamSid and callSid
         3. Then audio messages
         """
-        from api.services.pipecat.run_pipeline import run_pipeline_twilio
+        from collarx_engine.pipeline import run_pipeline_twilio
 
         try:
             # Wait for "connected" event

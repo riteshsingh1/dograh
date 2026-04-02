@@ -10,7 +10,7 @@ from loguru import logger
 
 from api.db import db_client
 from api.enums import OrganizationConfigurationKey
-from api.services.telephony.base import TelephonyProvider
+from collarx_engine.telephony.base import TelephonyProvider
 from api.services.telephony.providers.ari_provider import ARIProvider
 from api.services.telephony.providers.cloudonix_provider import CloudonixProvider
 from api.services.telephony.providers.plivo_provider import PlivoProvider

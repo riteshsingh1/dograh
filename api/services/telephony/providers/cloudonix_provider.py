@@ -11,7 +11,7 @@ from fastapi import HTTPException
 from loguru import logger
 
 from api.enums import WorkflowRunMode
-from api.services.telephony.base import (
+from collarx_engine.telephony.base import (
     CallInitiationResult,
     NormalizedInboundData,
     TelephonyProvider,
@@ -383,7 +383,7 @@ class CloudonixProvider(TelephonyProvider):
         2. "start" event with streamSid and callSid
         3. Then audio messages
         """
-        from api.services.pipecat.run_pipeline import run_pipeline_cloudonix
+        from collarx_engine.pipeline import run_pipeline_cloudonix
 
         try:
             # Wait for "connected" event

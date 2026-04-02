@@ -1,0 +1,26 @@
+name: collarx-engine-ci
+
+on:
+  push:
+    paths:
+      - "collarx-engine/**"
+      - "collarx_engine/**"
+      - ".github/workflows/collarx-engine-ci.yml"
+  pull_request:
+    paths:
+      - "collarx-engine/**"
+      - "collarx_engine/**"
+      - ".github/workflows/collarx-engine-ci.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install engine package dependencies
+        run: python -m pip install -e ./collarx-engine
+      - name: Compile engine package
+        run: python -m compileall collarx-engine/src/collarx_engine

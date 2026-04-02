@@ -3,6 +3,8 @@
 FROM python:3.12-slim AS builder
 
 WORKDIR /app
+ARG COLLARX_ACCESS_TOKEN
+ARG COLLARX_ENGINE_REF=v1.0.0
 
 # Install git in builder stage (needed for pip install from git)
 RUN apt-get update && apt-get install -y \
@@ -22,6 +24,11 @@ RUN pip install --user --no-cache-dir torch --index-url https://download.pytorch
 RUN pip install --user --no-cache-dir -r requirements.txt && \
     # Clean up pip cache after installation
     rm -rf /root/.cache/pip
+
+# Install private Collarx engine package when token is provided.
+RUN if [ -n "$COLLARX_ACCESS_TOKEN" ]; then \
+      pip install --user --no-cache-dir "git+https://${COLLARX_ACCESS_TOKEN}@github.com/zansat/collarx-engine.git@${COLLARX_ENGINE_REF}"; \
+    fi
 
 # Copy and install pipecat from local submodule
 COPY pipecat /tmp/pipecat

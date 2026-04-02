@@ -48,8 +48,8 @@ from api.services.pipecat.transport_setup import (
 )
 from api.services.pipecat.ws_sender_registry import get_ws_sender
 from api.services.workflow.dto import ReactFlowDTO
-from api.services.workflow.pipecat_engine import PipecatEngine
-from api.services.workflow.workflow import WorkflowGraph
+from collarx_engine.workflow import PipecatEngine
+from collarx_engine.workflow.graph import WorkflowGraph
 from pipecat.audio.turn.smart_turn.base_smart_turn import SmartTurnParams
 from pipecat.audio.turn.smart_turn.local_smart_turn_v3 import LocalSmartTurnAnalyzerV3
 from pipecat.audio.vad.silero import SileroVADAnalyzer

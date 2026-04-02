@@ -4,7 +4,7 @@ from typing import Dict
 from loguru import logger
 
 from api.db import db_client
-from api.services.campaign.campaign_call_dispatcher import campaign_call_dispatcher
+from collarx_engine.campaign.dispatcher import campaign_call_dispatcher
 from api.services.campaign.campaign_event_publisher import (
     get_campaign_event_publisher,
 )

@@ -116,7 +116,7 @@ async def create_cloudonix_transport(
     """Create a transport for Cloudonix connections"""
 
     # Load Cloudonix configuration from database
-    from api.services.telephony.factory import load_telephony_config
+    from collarx_engine.telephony.factory import load_telephony_config
 
     config = await load_telephony_config(organization_id)
 
@@ -180,7 +180,7 @@ async def create_ari_transport(
 ):
     """Create a transport for Asterisk ARI connections"""
 
-    from api.services.telephony.factory import load_telephony_config
+    from collarx_engine.telephony.factory import load_telephony_config
 
     config = await load_telephony_config(organization_id)
 
@@ -250,7 +250,7 @@ async def create_vonage_transport(
     """Create a transport for Vonage connections"""
 
     # Use the factory to load config from database
-    from api.services.telephony.factory import load_telephony_config
+    from collarx_engine.telephony.factory import load_telephony_config
 
     config = await load_telephony_config(organization_id)
 
@@ -326,7 +326,7 @@ async def create_vobiz_transport(
     )
 
     # Load Vobiz configuration from database
-    from api.services.telephony.factory import load_telephony_config
+    from collarx_engine.telephony.factory import load_telephony_config
 
     config = await load_telephony_config(organization_id)
 

@@ -13,7 +13,7 @@ from fastapi import HTTPException, Response
 from loguru import logger
 
 from api.enums import WorkflowRunMode
-from api.services.telephony.base import (
+from collarx_engine.telephony.base import (
     CallInitiationResult,
     NormalizedInboundData,
     TelephonyProvider,
@@ -323,7 +323,7 @@ class VonageProvider(TelephonyProvider):
         2. Or directly start with binary audio
         """
         from api.db import db_client
-        from api.services.pipecat.run_pipeline import run_pipeline_vonage
+        from collarx_engine.pipeline import run_pipeline_vonage
 
         try:
             # Get workflow run to extract call UUID

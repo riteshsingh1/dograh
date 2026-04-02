@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Collarx License Admin</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 24px; }
+      .cards { display: flex; gap: 12px; margin-bottom: 16px; }
+      .card { border: 1px solid #ddd; padding: 12px; border-radius: 8px; min-width: 120px; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+      form.inline { display: inline; }
+    </style>
+  </head>
+  <body>
+    <h1>Collarx License Admin</h1>
+    <form method="post" action="/admin/logout">
+      <button type="submit">Logout</button>
+    </form>
+    <div class="cards">
+      <div class="card"><strong>Total</strong><div>{{ total }}</div></div>
+      <div class="card"><strong>Active</strong><div>{{ active }}</div></div>
+      <div class="card"><strong>Revoked</strong><div>{{ revoked }}</div></div>
+    </div>
+
+    <h2>Create License</h2>
+    <form method="post" action="/admin/create">
+      <input name="purchase_code" placeholder="Purchase code" required />
+      <input name="domain" placeholder="Domain (optional)" />
+      <button type="submit">Create</button>
+    </form>
+
+    <h2>Licenses</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>License Key</th>
+          <th>Purchase Code</th>
+          <th>Domain</th>
+          <th>Status</th>
+          <th>Activations</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in licenses %}
+        <tr>
+          <td>{{ row.license_key }}</td>
+          <td>{{ row.purchase_code }}</td>
+          <td>{{ row.domain or "-" }}</td>
+          <td>{{ row.status.value }}</td>
+          <td>{{ row.activation_count }}</td>
+          <td>
+            <form class="inline" method="post" action="/admin/revoke">
+              <input type="hidden" name="license_key" value="{{ row.license_key }}" />
+              <button type="submit">Revoke</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

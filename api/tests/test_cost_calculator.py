@@ -1,4 +1,4 @@
-from api.services.pricing.cost_calculator import cost_calculator
+from collarx_engine.pricing.calculator import cost_calculator
 
 
 def test_cost_calculator():

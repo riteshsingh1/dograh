@@ -15,8 +15,8 @@ from api.services.campaign.errors import (
     PhoneNumberPoolExhaustedError,
 )
 from api.services.campaign.rate_limiter import rate_limiter
-from api.services.telephony.base import TelephonyProvider
-from api.services.telephony.factory import get_telephony_provider
+from collarx_engine.telephony.base import TelephonyProvider
+from collarx_engine.telephony.factory import get_telephony_provider
 from api.utils.common import ensure_public_webhook_endpoint, get_backend_endpoints
 
 

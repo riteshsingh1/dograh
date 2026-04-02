@@ -9,7 +9,7 @@ from api.services.pipecat.in_memory_buffers import (
     InMemoryLogsBuffer,
 )
 from api.services.pipecat.pipeline_metrics_aggregator import PipelineMetricsAggregator
-from api.services.workflow.pipecat_engine import PipecatEngine
+from collarx_engine.workflow import PipecatEngine
 from api.tasks.arq import enqueue_job
 from api.tasks.function_names import FunctionNames
 from pipecat.frames.frames import Frame, LLMContextFrame

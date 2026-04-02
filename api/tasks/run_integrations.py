@@ -10,7 +10,7 @@ from api.constants import BACKEND_API_ENDPOINT
 from api.db import db_client
 from api.db.models import WorkflowRunModel
 from api.services.campaign.output_sync import campaign_output_sync_service
-from api.services.workflow.qa import run_per_node_qa_analysis
+from collarx_engine.workflow.qa import run_per_node_qa_analysis
 from api.utils.credential_auth import build_auth_header
 from api.utils.template_renderer import render_template
 from pipecat.utils.enums import EndTaskReason

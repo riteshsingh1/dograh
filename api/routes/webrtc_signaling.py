@@ -37,7 +37,7 @@ from api.routes.turn_credentials import (
     generate_turn_credentials,
 )
 from api.services.auth.depends import get_user_ws
-from api.services.pipecat.run_pipeline import run_pipeline_smallwebrtc
+from collarx_engine.pipeline import run_pipeline_smallwebrtc
 from api.services.pipecat.ws_sender_registry import (
     register_ws_sender,
     unregister_ws_sender,

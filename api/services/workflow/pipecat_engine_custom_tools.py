@@ -18,7 +18,7 @@ from api.constants import APP_ROOT_DIR
 from api.db import db_client
 from api.enums import ToolCategory, WorkflowRunMode
 from api.services.telephony.call_transfer_manager import get_call_transfer_manager
-from api.services.telephony.factory import get_telephony_provider
+from collarx_engine.telephony.factory import get_telephony_provider
 from api.services.telephony.transfer_event_protocol import TransferContext
 from api.services.workflow.disposition_mapper import (
     get_organization_id_from_workflow_run,
@@ -38,7 +38,7 @@ from pipecat.services.llm_service import FunctionCallParams
 from pipecat.utils.enums import EndTaskReason
 
 if TYPE_CHECKING:
-    from api.services.workflow.pipecat_engine import PipecatEngine
+    from collarx_engine.workflow import PipecatEngine
 
 
 def get_function_schema(

@@ -14,7 +14,7 @@ from pydantic import BaseModel
 from api.db import db_client
 from api.enums import TriggerState
 from api.services.quota_service import check_dograh_quota_by_user_id
-from api.services.telephony.factory import get_telephony_provider
+from collarx_engine.telephony.factory import get_telephony_provider
 from api.utils.common import ensure_public_webhook_endpoint, get_backend_endpoints
 
 router = APIRouter(prefix="/public/agent")

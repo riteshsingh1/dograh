@@ -21,7 +21,7 @@ from pipecat.frames.frames import (
 from pipecat.utils.enums import EndTaskReason
 
 if TYPE_CHECKING:
-    from api.services.workflow.pipecat_engine import PipecatEngine
+    from collarx_engine.workflow import PipecatEngine
 
 
 # ---------------------------------------------------------------------------

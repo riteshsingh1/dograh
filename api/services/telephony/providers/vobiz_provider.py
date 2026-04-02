@@ -11,7 +11,7 @@ from fastapi import HTTPException
 from loguru import logger
 
 from api.enums import WorkflowRunMode
-from api.services.telephony.base import (
+from collarx_engine.telephony.base import (
     CallInitiationResult,
     NormalizedInboundData,
     TelephonyProvider,
@@ -355,7 +355,7 @@ class VobizProvider(TelephonyProvider):
         Extracts stream_id and call_id from the start event and delegates
         message handling to VobizFrameSerializer.
         """
-        from api.services.pipecat.run_pipeline import run_pipeline_vobiz
+        from collarx_engine.pipeline import run_pipeline_vobiz
 
         first_msg = await websocket.receive_text()
         start_msg = json.loads(first_msg)

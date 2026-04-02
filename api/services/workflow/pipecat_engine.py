@@ -4,7 +4,7 @@ from api.services.workflow.disposition_mapper import (
     apply_disposition_mapping,
     get_organization_id_from_workflow_run,
 )
-from api.services.workflow.workflow import Node, WorkflowGraph
+from collarx_engine.workflow.graph import Node, WorkflowGraph
 from pipecat.adapters.schemas.tools_schema import ToolsSchema
 from pipecat.frames.frames import (
     BotStartedSpeakingFrame,

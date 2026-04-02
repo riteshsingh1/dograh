@@ -22,7 +22,7 @@ from api.services.configuration.masking import (
 from api.services.mps_service_key_client import mps_service_key_client
 from api.services.workflow.dto import ReactFlowDTO
 from api.services.workflow.errors import ItemKind, WorkflowError
-from api.services.workflow.workflow import WorkflowGraph
+from collarx_engine.workflow.graph import WorkflowGraph
 
 
 def extract_trigger_paths(workflow_definition: dict) -> List[str]:

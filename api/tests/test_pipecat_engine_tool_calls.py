@@ -10,8 +10,8 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from api.services.workflow.pipecat_engine import PipecatEngine
-from api.services.workflow.workflow import WorkflowGraph
+from collarx_engine.workflow import PipecatEngine
+from collarx_engine.workflow.graph import WorkflowGraph
 from api.tests.conftest import END_CALL_SYSTEM_PROMPT
 from pipecat.frames.frames import LLMContextFrame
 from pipecat.pipeline.pipeline import Pipeline

@@ -12,7 +12,7 @@ from pipecat.processors.aggregators.llm_context import LLMContext
 from pipecat.utils.tracing.service_attributes import add_llm_span_attributes
 
 if TYPE_CHECKING:
-    from api.services.workflow.pipecat_engine import PipecatEngine
+    from collarx_engine.workflow import PipecatEngine
 
 
 class VariableExtractionManager:
