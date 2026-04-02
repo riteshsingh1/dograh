@@ -928,6 +928,22 @@ async def handle_vobiz_xml_webhook(
     return HTMLResponse(content=response_content, media_type="application/xml")
 
 
+@router.post("/plivo-xml", include_in_schema=False)
+async def handle_plivo_xml_webhook(
+    workflow_id: int, user_id: int, workflow_run_id: int, organization_id: int
+):
+    """
+    Handle initial webhook from Plivo when call is answered.
+    Returns Plivo XML response with Stream element.
+    """
+    set_current_run_id(workflow_run_id)
+    provider = await get_telephony_provider(organization_id)
+    response_content = await provider.get_webhook_response(
+        workflow_id, user_id, workflow_run_id
+    )
+    return HTMLResponse(content=response_content, media_type="application/xml")
+
+
 @router.post("/vobiz/hangup-callback/{workflow_run_id}")
 async def handle_vobiz_hangup_callback(
     workflow_run_id: int,

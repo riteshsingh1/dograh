@@ -16,6 +16,18 @@ Dograh AI's telephony integration system provides a unified interface for connec
   <Card title="Vonage" href="/integrations/telephony/vonage">
     High-quality voice with 16kHz audio and excellent international coverage
   </Card>
+  <Card title="Plivo" href="/integrations/telephony/plivo">
+    Developer-friendly voice APIs with competitive India pricing
+  </Card>
+  <Card title="Vobiz" href="/integrations/telephony/vobiz">
+    Cloud-based telephony with global reach and flexible routing
+  </Card>
+  <Card title="Cloudonix" href="/integrations/telephony/cloudonix">
+    SIP-first telephony connectivity for cloud and on-prem systems
+  </Card>
+  <Card title="Asterisk ARI" href="/integrations/telephony/asterisk-ari">
+    Integrate with your own Asterisk PBX using ARI
+  </Card>
   <Card title="Custom Provider" href="/integrations/telephony/custom">
     Build your own telephony provider integration
   </Card>
@@ -44,7 +56,7 @@ class TelephonyProvider(ABC):
 Dograh AI uses database configuration for all telephony providers. Configure providers through the web interface:
 
 1. Navigate to **Workflow** → **Phone Call** → **Configure Telephony**
-2. Select your provider (Twilio or Vonage)
+2. Select your provider (Twilio, Vonage, Plivo, Vobiz, Cloudonix, or Asterisk ARI)
 3. Watch the provider-specific video tutorial for setup guidance
 4. Enter your credentials
 5. Save configuration
@@ -100,6 +112,10 @@ The telephony system exposes these unified endpoints:
 
 - **Twilio**: ✅ Fully implemented and tested
 - **Vonage**: ✅ Fully implemented with 16kHz audio support
+- **Plivo**: ✅ Implemented for outbound and inbound workflows
+- **Vobiz**: ✅ Implemented with inbound and outbound support
+- **Cloudonix**: ✅ Implemented with SIP-centric routing support
+- **Asterisk ARI**: ✅ Implemented for PBX-based deployments
 - **Custom Providers**: The abstraction layer supports adding new providers by implementing the `TelephonyProvider` interface
 
 ## Troubleshooting
@@ -131,5 +147,6 @@ The telephony system exposes these unified endpoints:
 ## Next Steps
 
 - [Set up your first telephony provider](/integrations/telephony/twilio)
+- [Set up Plivo integration](/integrations/telephony/plivo)
 - [Build a custom provider integration](/integrations/telephony/custom)
 - [Configure webhooks and callbacks](/integrations/telephony/webhooks)

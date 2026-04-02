@@ -1,0 +1,99 @@
+---
+title: "Plivo Integration"
+description: "Configure Plivo for voice communication in Dograh AI"
+---
+
+## Overview
+
+Plivo is a programmable communications platform for voice and messaging. Dograh AI's Plivo integration supports outbound and inbound calling with real-time audio streaming for voice agents.
+
+## Prerequisites
+
+Before setting up Plivo integration, you'll need:
+
+- A [Plivo account](https://www.plivo.com/)
+- Plivo **Auth ID** and **Auth Token**
+- At least one Plivo voice-enabled phone number
+- Dograh AI instance running and publicly accessible
+
+## Configuration
+
+### Step 1: Get Plivo Credentials
+
+1. Log in to your Plivo Console
+2. Copy your **Auth ID**
+3. Copy your **Auth Token**
+4. Ensure your number is voice-enabled
+
+### Step 2: Configure in Dograh AI
+
+1. Navigate to **Workflow** -> **Phone Call** -> **Configure Telephony**
+2. Select **Plivo** as your provider
+3. Enter your credentials:
+   - Auth ID
+   - Auth Token
+   - From Phone Number(s) in E.164 format **without** `+` (e.g., `14155551234`)
+4. Click **Save Configuration**
+
+<Note>
+For Plivo provider configuration in Dograh, enter numbers without the `+` prefix.
+</Note>
+
+### Step 3: Test Your Configuration
+
+1. Create a test workflow
+2. Click "Test Call" to verify connection
+3. Check call logs for successful connection
+
+## Inbound Calling Setup
+
+To enable inbound calling with Plivo:
+
+1. **Complete Telephony Configuration** using the steps above
+2. **Set your inbound webhook URL** in Plivo as:
+   - `https://api.dograh.com/api/v1/telephony/inbound/{workflow_id}`
+
+<Note>
+Replace `{workflow_id}` with your actual workflow ID. If using self-hosted Dograh, replace `api.dograh.com` with your domain.
+</Note>
+
+### Test Inbound Calling
+
+1. Call your configured Plivo number from another phone
+2. Verify your Dograh AI voice agent answers and responds
+3. Check logs in both Dograh AI and Plivo dashboard
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Authentication failed">
+    - Verify Auth ID and Auth Token are correct
+    - Check for extra spaces in credentials
+    - Ensure credentials have not been regenerated in Plivo
+  </Accordion>
+
+  <Accordion title="No audio on calls">
+    - Verify WebSocket connection is established
+    - Ensure firewall rules allow secure WebSocket traffic
+    - Confirm your deployment is served over HTTPS in production
+  </Accordion>
+
+  <Accordion title="Inbound calls not reaching the agent">
+    - Verify inbound webhook URL is configured correctly in Plivo
+    - Ensure your Dograh API endpoint is publicly accessible
+    - Confirm the phone number is mapped to the correct application settings
+  </Accordion>
+
+  <Accordion title="Invalid phone number format">
+    - Enter Plivo numbers without `+` in telephony configuration
+    - Use E.164 digits only (example: `14155551234`)
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+- Store credentials securely in your organization configuration
+- Test with a single number before scaling traffic
+- Monitor call quality and billing in the Plivo dashboard
+- Keep a fallback provider configured during rollout
+

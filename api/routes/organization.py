@@ -12,6 +12,8 @@ from api.schemas.telephony_config import (
     ARIConfigurationResponse,
     CloudonixConfigurationRequest,
     CloudonixConfigurationResponse,
+    PlivoConfigurationRequest,
+    PlivoConfigurationResponse,
     TelephonyConfigurationResponse,
     TwilioConfigurationRequest,
     TwilioConfigurationResponse,
@@ -30,6 +32,7 @@ PROVIDER_MASKED_FIELDS = {
     "twilio": ["account_sid", "auth_token"],
     "vonage": ["private_key", "api_key", "api_secret"],
     "vobiz": ["auth_id", "auth_token"],
+    "plivo": ["auth_id", "auth_token"],
     "cloudonix": ["bearer_token"],
     "ari": ["app_password"],
 }
@@ -92,6 +95,7 @@ async def get_telephony_configuration(user: UserModel = Depends(get_user)):
                 from_numbers=from_numbers,
             ),
             vobiz=None,
+            plivo=None,
             cloudonix=None,
         )
     elif stored_provider == "vobiz":
@@ -106,6 +110,26 @@ async def get_telephony_configuration(user: UserModel = Depends(get_user)):
             vonage=None,
             vobiz=VobizConfigurationResponse(
                 provider="vobiz",
+                auth_id=mask_key(auth_id) if auth_id else "",
+                auth_token=mask_key(auth_token) if auth_token else "",
+                from_numbers=from_numbers,
+            ),
+            plivo=None,
+            cloudonix=None,
+        )
+    elif stored_provider == "plivo":
+        auth_id = config.value.get("auth_id", "")
+        auth_token = config.value.get("auth_token", "")
+        from_numbers = (
+            config.value.get("from_numbers", []) if auth_id and auth_token else []
+        )
+
+        return TelephonyConfigurationResponse(
+            twilio=None,
+            vonage=None,
+            vobiz=None,
+            plivo=PlivoConfigurationResponse(
+                provider="plivo",
                 auth_id=mask_key(auth_id) if auth_id else "",
                 auth_token=mask_key(auth_token) if auth_token else "",
                 from_numbers=from_numbers,
@@ -127,6 +151,7 @@ async def get_telephony_configuration(user: UserModel = Depends(get_user)):
                 from_numbers=from_numbers,
             ),
             vobiz=None,
+            plivo=None,
         )
     elif stored_provider == "ari":
         ari_endpoint = config.value.get("ari_endpoint", "")
@@ -158,6 +183,7 @@ async def save_telephony_configuration(
         TwilioConfigurationRequest,
         VonageConfigurationRequest,
         VobizConfigurationRequest,
+        PlivoConfigurationRequest,
         CloudonixConfigurationRequest,
         ARIConfigurationRequest,
     ],
@@ -193,6 +219,13 @@ async def save_telephony_configuration(
     elif request.provider == "vobiz":
         config_value = {
             "provider": "vobiz",
+            "auth_id": request.auth_id,
+            "auth_token": request.auth_token,
+            "from_numbers": request.from_numbers,
+        }
+    elif request.provider == "plivo":
+        config_value = {
+            "provider": "plivo",
             "auth_id": request.auth_id,
             "auth_token": request.auth_token,
             "from_numbers": request.from_numbers,

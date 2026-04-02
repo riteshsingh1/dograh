@@ -92,6 +92,7 @@
               "integrations/telephony/inbound",
               "integrations/telephony/twilio",
               "integrations/telephony/vonage",
+              "integrations/telephony/plivo",
               "integrations/telephony/cloudonix",
               "integrations/telephony/vobiz",
               "integrations/telephony/asterisk-ari",
