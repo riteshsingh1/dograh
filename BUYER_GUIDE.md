@@ -83,6 +83,20 @@ docker compose up -d
 - `COLLARX_LICENSE_SIGNING_SECRET` (recommended, validates signed responses from license server)
 - `COLLARX_ENGINE_SELF_HASH` (optional anti-tamper runtime integrity check)
 
+### Generate `COLLARX_ENGINE_SELF_HASH`
+
+Run this before production deploy (or in CI):
+
+```bash
+python3 scripts/generate_engine_hash.py --engine-dir collarx-engine/src/collarx_engine
+```
+
+To append directly into your env file:
+
+```bash
+python3 scripts/generate_engine_hash.py --engine-dir collarx-engine/src/collarx_engine --env-file .env
+```
+
 ### Auth mode
 
 - OSS/local: `AUTH_PROVIDER=local`
